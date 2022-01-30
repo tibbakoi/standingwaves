@@ -1,2 +1,2 @@
 # standingwaves
-2d standing waves demo
+2-D standing waves demo using p5
