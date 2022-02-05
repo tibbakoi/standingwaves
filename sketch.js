@@ -12,8 +12,20 @@ let markerPermitMovement = [1, 1, 1, 1]; //Left right up down
 let markerPosX = canvasSizeX - 50;
 let markerPosY = canvasSizeY - 10;
 
+// audio variables
+let osc1 = new p5.Oscillator('sine');
+let playButton;
+let oscStatus = 0;
+
 function setup() {
-    createCanvas(canvasSizeX, canvasSizeY);
+    let canvas = createCanvas(canvasSizeX, canvasSizeY);
+    canvas.parent('demo');
+
+    osc1.amp(0.15);
+    osc1.freq(440);
+
+    playButton = createButton('play').position(0, 0, 'relative');
+    playButton.mousePressed(playPauseAudio);
 }
 
 function draw() {
@@ -68,5 +80,15 @@ function mousePressed() {
     if (mouseX <= canvasSizeX && mouseX >= 0 && mouseY >= 0 && mouseY <= canvasSizeY) {
         markerPosX = mouseX;
         markerPosY = mouseY;
+    }
+}
+
+function playPauseAudio() {
+    if (oscStatus === 0) {
+        osc1.start();
+        oscStatus = 1;
+    } else if (oscStatus === 1) {
+        osc1.stop();
+        oscStatus = 0;
     }
 }
