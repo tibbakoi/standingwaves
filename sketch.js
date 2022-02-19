@@ -30,8 +30,8 @@ function setup() {
     canvas.parent('demo');
     frameRate(60);
 
-    osc1.amp(0.15);
-    osc1.freq(440);
+    osc1.amp(0);
+    osc1.freq(100);
 
     playButton = createButton('toggle play').position(0, 0, 'relative');
     playButton.mousePressed(playPauseAudio);
@@ -73,7 +73,11 @@ function draw() {
         }
     }
 
+    //draw marker location
     drawMarker(markerPosX, markerPosY, markerSize);
+
+    //change amplitude accordingly based on markerPosX, ramping over 0.05seconds
+    osc1.amp(cos(radians(markerPosX / canvasSizeX * 1 / 2 * 360)), 0.05);
 }
 
 //Draw marker at given position and size
