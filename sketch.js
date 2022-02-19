@@ -8,7 +8,7 @@ https://github.com/tibbakoi
 
 //size variables - using 1px = 1cm
 // for reference, gen6 teaching room is 7m x 5.6m x 2.6m
-let canvasSizeX = 700; // 7m wide
+let canvasSizeX = 500; // 7m wide
 let canvasSizeY = 460; //4.6m deep
 let markerSize = 15; //person head ~15cm wide?
 
@@ -21,20 +21,31 @@ let markerPosX = canvasSizeX - 50;
 let markerPosY = canvasSizeY - 10;
 
 // audio variables
-let osc1 = new p5.Oscillator('sine');
-let playButton;
+let oscX = new p5.Oscillator('sine');
+let playButton, harmonicSelectRadio;
+
+//default values
 let oscStatus = 0;
+let currentHarmonic = 1;
+let lowestFreq = 100;
 
 function setup() {
     let canvas = createCanvas(canvasSizeX, canvasSizeY);
     canvas.parent('demo');
     frameRate(60);
 
-    osc1.amp(0);
-    osc1.freq(100);
+    oscX.amp(0);
+    oscX.freq(lowestFreq * currentHarmonic);
 
-    playButton = createButton('toggle play').position(0, 0, 'relative');
+    playButton = createButton('toggle play').position(0, 0, "relative");
     playButton.mousePressed(playPauseAudio);
+
+    harmonicSelectRadio = createRadio().position(0, 0, "relative");
+    harmonicSelectRadio.option('1');
+    harmonicSelectRadio.option('2');
+    harmonicSelectRadio.option('3');
+    harmonicSelectRadio.selected(str(currentHarmonic));
+
 }
 
 function draw() {
@@ -77,7 +88,9 @@ function draw() {
     drawMarker(markerPosX, markerPosY, markerSize);
 
     //change amplitude accordingly based on markerPosX, ramping over 0.05seconds
-    osc1.amp(cos(radians(markerPosX / canvasSizeX * 1 / 2 * 360)), 0.05);
+    oscX.amp(cos(radians(markerPosX / canvasSizeX * currentHarmonic / 2 * 360)), 0.05);
+
+    harmonicSelectRadio.changed(selectHarmonic);
 }
 
 //Draw marker at given position and size
@@ -101,12 +114,20 @@ function mousePressed() {
     }
 }
 
+//Button for audio playback
 function playPauseAudio() {
     if (oscStatus === 0) {
-        osc1.start();
+        oscX.start();
         oscStatus = 1;
     } else if (oscStatus === 1) {
-        osc1.stop();
+        oscX.stop();
         oscStatus = 0;
     }
+}
+
+//Change current harmonic
+function selectHarmonic() {
+    currentHarmonic = int(harmonicSelectRadio.value());
+    oscX.freq(lowestFreq * currentHarmonic);
+
 }
