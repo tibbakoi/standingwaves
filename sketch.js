@@ -25,30 +25,48 @@ let markerPosY = roomSizeY - 10;
 
 // audio variables
 let oscX = new p5.Oscillator('sine');
-let playButton, harmonicSelectRadio;
+let oscY = new p5.Oscillator('sine');
+let playButtonX, harmonicSelectRadioX, playButtonY, harmonicSelectRadioY;
 
 //default values
-let oscStatus = 0;
-let currentHarmonic = 1;
-let lowestFreq = 100;
+let oscStatusX = 0;
+let currentHarmonicX = 1;
+let lowestFreqX = 175;
+
+let oscStatusY = 0;
+let currentHarmonicY = 1;
+let lowestFreqY = 100;
 
 function setup() {
     let canvas = createCanvas(canvasSizeX, canvasSizeY);
     canvas.parent('demo');
     frameRate(60);
 
+    //relating to X-direction generation
     oscX.amp(0);
-    oscX.freq(lowestFreq * currentHarmonic);
+    oscX.freq(lowestFreqX * currentHarmonicX);
 
-    playButton = createButton('toggle play').position(10, roomSizeY + 125);
-    playButton.mousePressed(playPauseAudio);
-    playButton.parent('demo');
+    playButtonX = createButton('toggle play X').position(10, roomSizeY + 125);
+    playButtonX.mousePressed(playPauseAudioX);
 
-    harmonicSelectRadio = createRadio().position(10, roomSizeY + 150);
-    harmonicSelectRadio.option('1');
-    harmonicSelectRadio.option('2');
-    harmonicSelectRadio.option('3');
-    harmonicSelectRadio.selected(str(currentHarmonic));
+    harmonicSelectRadioX = createRadio('harmonicSelectRadioX').position(10, roomSizeY + 150);
+    harmonicSelectRadioX.option('1');
+    harmonicSelectRadioX.option('2');
+    harmonicSelectRadioX.option('3');
+    harmonicSelectRadioX.selected('1');
+
+    //relating to Y-direction generation
+    oscY.amp(0);
+    oscY.freq(lowestFreqY * currentHarmonicY);
+
+    playButtonY = createButton('toggle play Y').position(150, roomSizeY + 125);
+    playButtonY.mousePressed(playPauseAudioY);
+
+    harmonicSelectRadioY = createRadio('harmonicSelectRadioY').position(150, roomSizeY + 150);
+    harmonicSelectRadioY.option('1');
+    harmonicSelectRadioY.option('2');
+    harmonicSelectRadioY.option('3');
+    harmonicSelectRadioY.selected('1');
 
 }
 
@@ -92,10 +110,13 @@ function draw() {
     //draw marker location
     drawMarker(markerPosX, markerPosY, markerSize);
 
-    //change amplitude accordingly based on markerPosX, ramping over 0.05seconds
-    oscX.amp(cos(radians(markerPosX / canvasSizeX * currentHarmonic / 2 * 360)), 0.05);
+    //change amplitude accordingly based on markerPosX and markerPosY, ramping over 0.05seconds
+    oscX.amp(cos(radians(markerPosX / roomSizeX * currentHarmonicX / 2 * 360)), 0.05);
+    oscY.amp(cos(radians(markerPosY / roomSizeY * currentHarmonicY / 2 * 360)), 0.05);
 
-    harmonicSelectRadio.changed(selectHarmonic);
+    harmonicSelectRadioX.changed(selectHarmonicX);
+    harmonicSelectRadioY.changed(selectHarmonicY);
+
 }
 
 //Draw marker at given position and size
@@ -119,20 +140,36 @@ function mousePressed() {
     }
 }
 
-//Button for audio playback
-function playPauseAudio() {
-    if (oscStatus === 0) {
+//Button for audio playback for X-direction
+function playPauseAudioX() {
+    if (oscStatusX === 0) {
         oscX.start();
-        oscStatus = 1;
-    } else if (oscStatus === 1) {
+        oscStatusX = 1;
+    } else if (oscStatusX === 1) {
         oscX.stop();
-        oscStatus = 0;
+        oscStatusX = 0;
     }
 }
 
-//Change current harmonic
-function selectHarmonic() {
-    currentHarmonic = int(harmonicSelectRadio.value());
-    oscX.freq(lowestFreq * currentHarmonic);
+//Button for audio playback for Y-direction
+function playPauseAudioY() {
+    if (oscStatusY === 0) {
+        oscY.start();
+        oscStatusY = 1;
+    } else if (oscStatusY === 1) {
+        oscY.stop();
+        oscStatusY = 0;
+    }
+}
 
+//Change current harmonic for X-direction
+function selectHarmonicX() {
+    currentHarmonicX = int(harmonicSelectRadioX.value());
+    oscX.freq(lowestFreqX * currentHarmonicX);
+}
+
+//Change current harmonic for Y-direction
+function selectHarmonicY() {
+    currentHarmonicY = int(harmonicSelectRadioY.value());
+    oscY.freq(lowestFreqY * currentHarmonicY);
 }
