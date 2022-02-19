@@ -1,3 +1,11 @@
+/*
+Standing waves demo
+
+Author: Kat Young
+https://github.com/tibbakoi
+2022
+*/
+
 //size variables - using 1px = 1cm
 // for reference, gen6 teaching room is 7m x 5.6m x 2.6m
 let canvasSizeX = 700; // 7m wide
