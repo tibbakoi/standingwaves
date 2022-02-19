@@ -59,10 +59,10 @@ function setup() {
     oscY.amp(0);
     oscY.freq(lowestFreqY * currentHarmonicY);
 
-    playButtonY = createButton('toggle play Y').position(150, roomSizeY + 125);
+    playButtonY = createButton('toggle play Y').position(175, roomSizeY + 125);
     playButtonY.mousePressed(playPauseAudioY);
 
-    harmonicSelectRadioY = createRadio('harmonicSelectRadioY').position(150, roomSizeY + 150);
+    harmonicSelectRadioY = createRadio('harmonicSelectRadioY').position(175, roomSizeY + 150);
     harmonicSelectRadioY.option('1');
     harmonicSelectRadioY.option('2');
     harmonicSelectRadioY.option('3');
@@ -80,6 +80,9 @@ function draw() {
     drawDoor();
 
     //changing elements
+    textSize(15);
+    text(str(lowestFreqX * currentHarmonicX) + "Hz", 105, roomSizeY + 27);
+    text(str(lowestFreqY * currentHarmonicY) + "Hz", 275, roomSizeY + 27);
 
     //changing marker location on keyPressed status rather than keyPressed function allows for press and hold
     if (keyIsPressed) {
