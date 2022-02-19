@@ -5,7 +5,7 @@ let canvasSizeY = 460; //4.6m deep
 let markerSize = 15; //person head ~15cm wide?
 
 // movement variables
-let markerMovementInc = 10; //10cm increments
+let markerMovementInc = 5; //5cm increments
 let markerPermitMovement = [1, 1, 1, 1]; //Left right up down
 
 // starting position variables - bottom right
@@ -20,21 +20,51 @@ let oscStatus = 0;
 function setup() {
     let canvas = createCanvas(canvasSizeX, canvasSizeY);
     canvas.parent('demo');
+    frameRate(60);
 
     osc1.amp(0.15);
     osc1.freq(440);
 
-    playButton = createButton('play').position(0, 0, 'relative');
+    playButton = createButton('toggle play').position(0, 0, 'relative');
     playButton.mousePressed(playPauseAudio);
 }
 
 function draw() {
+    //persisting elements
     background(255);
     noFill();
     stroke(0);
     rect(0, 0, canvasSizeX, canvasSizeY);
-
     drawDoor();
+
+    //changing elements
+
+    //changing marker location on keyPressed status rather than keyPressed function allows for press and hold
+    if (keyIsPressed) {
+        //Use arrow keys to move marker around in increments
+        if (keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW || keyCode === UP_ARROW || keyCode === DOWN_ARROW) {
+            // determine where marker can go based on current position - is the next increment going to take outside of walls?
+            if (markerPosX - markerMovementInc <= 0) { markerPermitMovement[0] = 0; } //can't go left
+            if (markerPosX + markerMovementInc >= canvasSizeX) { markerPermitMovement[1] = 0; } //can't go right
+            if (markerPosY - markerMovementInc <= 0) { markerPermitMovement[2] = 0; } //can't go up
+            if (markerPosY + markerMovementInc >= canvasSizeY) { markerPermitMovement[3] = 0; } //can't go down
+
+            //change marker position based on permitted movements
+            if (keyCode === RIGHT_ARROW && markerPermitMovement[1]) {
+                markerPosX = markerPosX + markerMovementInc;
+            } else if (keyCode === LEFT_ARROW && markerPermitMovement[0]) {
+                markerPosX = markerPosX - markerMovementInc;
+            } else if (keyCode === UP_ARROW && markerPermitMovement[2]) {
+                markerPosY = markerPosY - markerMovementInc;
+            } else if (keyCode === DOWN_ARROW && markerPermitMovement[3]) {
+                markerPosY = markerPosY + markerMovementInc;
+            }
+
+            // reset permitted movements for next key press
+            markerPermitMovement = [1, 1, 1, 1];
+        }
+    }
+
     drawMarker(markerPosX, markerPosY, markerSize);
 }
 
@@ -49,30 +79,6 @@ function drawMarker(xPos, yPos, size) {
 function drawDoor() {
     //standard door width ~ 75cm - therefore needs diameter of 150
     arc(canvasSizeX - 5, canvasSizeY, 150, 150, PI, PI * (2.5 / 2), PIE);
-}
-
-//Use arrow keys to move marker around in increments
-function keyPressed() { //only when pressed and released rather than pressed and held
-
-    // determine where marker can go based on current position - is the next increment going to take outside of walls?
-    if (markerPosX - markerMovementInc <= 0) { markerPermitMovement[0] = 0; } //can't go left
-    if (markerPosX + markerMovementInc >= canvasSizeX) { markerPermitMovement[1] = 0; } //can't go right
-    if (markerPosY - markerMovementInc <= 0) { markerPermitMovement[2] = 0; } //can't go up
-    if (markerPosY + markerMovementInc >= canvasSizeY) { markerPermitMovement[3] = 0; } //can't go down
-
-    //change marker position based on permitted movements
-    if (keyCode === RIGHT_ARROW && markerPermitMovement[1]) {
-        markerPosX = markerPosX + markerMovementInc;
-    } else if (keyCode === LEFT_ARROW && markerPermitMovement[0]) {
-        markerPosX = markerPosX - markerMovementInc;
-    } else if (keyCode === UP_ARROW && markerPermitMovement[2]) {
-        markerPosY = markerPosY - markerMovementInc;
-    } else if (keyCode === DOWN_ARROW && markerPermitMovement[3]) {
-        markerPosY = markerPosY + markerMovementInc;
-    }
-
-    // reset permitted movements for next key press
-    markerPermitMovement = [1, 1, 1, 1];
 }
 
 //Click mouse to move to new position
