@@ -37,10 +37,15 @@ let oscStatusY = 0;
 let currentHarmonicY = 1;
 let lowestFreqY = 100;
 
+let textcolourX,textcolourY;
+
 function setup() {
     let canvas = createCanvas(canvasSizeX, canvasSizeY);
     canvas.parent('demo');
     frameRate(60);
+
+    textcolourX = color(0,0,0); //default
+    textcolourY = color(0,0,0); //default
 
     //relating to X-direction generation
     oscX.amp(0);
@@ -81,8 +86,12 @@ function draw() {
 
     //changing elements
     textSize(15);
+    noStroke();
+    fill(textcolourX);
     text(str(lowestFreqX * currentHarmonicX) + "Hz", 105, roomSizeY + 27);
+    fill(textcolourY);
     text(str(lowestFreqY * currentHarmonicY) + "Hz", 275, roomSizeY + 27);
+    noFill();
 
     //changing marker location on keyPressed status rather than keyPressed function allows for press and hold
     if (keyIsPressed) {
@@ -148,9 +157,11 @@ function playPauseAudioX() {
     if (oscStatusX === 0) {
         oscX.start();
         oscStatusX = 1;
+        textcolourX = color(0,255,0);
     } else if (oscStatusX === 1) {
         oscX.stop();
         oscStatusX = 0;
+        textcolourX = color(0,0,0);
     }
 }
 
@@ -159,9 +170,11 @@ function playPauseAudioY() {
     if (oscStatusY === 0) {
         oscY.start();
         oscStatusY = 1;
+        textcolourY = color(0,255,0);
     } else if (oscStatusY === 1) {
         oscY.stop();
         oscStatusY = 0;
+        textcolourY = color(0,0,0);
     }
 }
 
