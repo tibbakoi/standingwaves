@@ -9,11 +9,11 @@ https://github.com/tibbakoi
 //size variables - using 1px = 1cm
 // for reference, gen6 teaching room is 7m x 5.6m x 2.6m
 let roomSizeX = 700; // 7m wide
-let roomSizeY = 460; //4.6m deep
+let roomSizeY = 400; //4.6m deep
 let markerSize = 15; //person head ~15cm wide?
 
-let canvasSizeX = roomSizeX;
-let canvasSizeY = roomSizeY + 75; //extra room at the bottom for buttons etc
+//let canvasSizeX = roomSizeX;
+//let canvasSizeY = roomSizeY + 75; //extra room at the bottom for buttons etc
 
 // movement variables
 let markerMovementInc = 5; //5cm increments
@@ -40,21 +40,21 @@ let lowestFreqY = 100;
 let textcolourX,textcolourY;
 
 function setup() {
-    let canvas = createCanvas(canvasSizeX, canvasSizeY);
+    let canvas = createCanvas(roomSizeX, roomSizeY);
     canvas.parent('demo');
     frameRate(60);
 
-    textcolourX = color(0,0,0); //default
-    textcolourY = color(0,0,0); //default
 
     //relating to X-direction generation
     oscX.amp(0);
     oscX.freq(lowestFreqX * currentHarmonicX);
 
-    playButtonX = createButton('toggle play X').position(10, roomSizeY + 125);
+    playButtonX = createButton('toggle play X').position(5, 5);
+    playButtonX.parent('buttons');
     playButtonX.mousePressed(playPauseAudioX);
 
-    harmonicSelectRadioX = createRadio('harmonicSelectRadioX').position(10, roomSizeY + 150);
+    harmonicSelectRadioX = createRadio('harmonicSelectRadioX').position(5,25);
+    harmonicSelectRadioX.parent('buttons');
     harmonicSelectRadioX.option('1');
     harmonicSelectRadioX.option('2');
     harmonicSelectRadioX.option('3');
@@ -64,14 +64,19 @@ function setup() {
     oscY.amp(0);
     oscY.freq(lowestFreqY * currentHarmonicY);
 
-    playButtonY = createButton('toggle play Y').position(175, roomSizeY + 125);
+    playButtonY = createButton('toggle play Y').position(5, 50);
+    playButtonY.parent('buttons');
     playButtonY.mousePressed(playPauseAudioY);
 
-    harmonicSelectRadioY = createRadio('harmonicSelectRadioY').position(175, roomSizeY + 150);
+    harmonicSelectRadioY = createRadio('harmonicSelectRadioY').position(5, 75);
+    harmonicSelectRadioY.parent('buttons');
     harmonicSelectRadioY.option('1');
     harmonicSelectRadioY.option('2');
     harmonicSelectRadioY.option('3');
     harmonicSelectRadioY.selected('1');
+
+    document.getElementById("xDirection").innerHTML = str(lowestFreqX * currentHarmonicX) + "Hz";
+    document.getElementById("yDirection").innerHTML = str(lowestFreqY * currentHarmonicY) + "Hz";
 
 }
 
@@ -80,18 +85,8 @@ function draw() {
     background(255);
     noFill();
     stroke(0);
-    rect(0, 0, canvasSizeX, canvasSizeY);
     rect(0, 0, roomSizeX, roomSizeY);
     drawDoor();
-
-    //changing elements
-    textSize(15);
-    noStroke();
-    fill(textcolourX);
-    text(str(lowestFreqX * currentHarmonicX) + "Hz", 105, roomSizeY + 27);
-    fill(textcolourY);
-    text(str(lowestFreqY * currentHarmonicY) + "Hz", 275, roomSizeY + 27);
-    noFill();
 
     //changing marker location on keyPressed status rather than keyPressed function allows for press and hold
     if (keyIsPressed) {
@@ -157,11 +152,11 @@ function playPauseAudioX() {
     if (oscStatusX === 0) {
         oscX.start();
         oscStatusX = 1;
-        textcolourX = color(0,255,0);
+        document.getElementById("xDirection").style.color = color(0,255,0);;
     } else if (oscStatusX === 1) {
         oscX.stop();
         oscStatusX = 0;
-        textcolourX = color(0,0,0);
+        document.getElementById("xDirection").style.color = color(0,0,0);;
     }
 }
 
@@ -170,22 +165,26 @@ function playPauseAudioY() {
     if (oscStatusY === 0) {
         oscY.start();
         oscStatusY = 1;
-        textcolourY = color(0,255,0);
+        document.getElementById("yDirection").style.color = color(0,255,0);;
+
     } else if (oscStatusY === 1) {
         oscY.stop();
         oscStatusY = 0;
-        textcolourY = color(0,0,0);
+        document.getElementById("yDirection").style.color = color(0,0,0);;
+
     }
 }
 
 //Change current harmonic for X-direction
 function selectHarmonicX() {
     currentHarmonicX = int(harmonicSelectRadioX.value());
+    document.getElementById("xDirection").innerHTML = str(lowestFreqX * currentHarmonicX) + "Hz";
     oscX.freq(lowestFreqX * currentHarmonicX);
 }
 
 //Change current harmonic for Y-direction
 function selectHarmonicY() {
     currentHarmonicY = int(harmonicSelectRadioY.value());
+    document.getElementById("yDirection").innerHTML = str(lowestFreqY * currentHarmonicY) + "Hz";
     oscY.freq(lowestFreqY * currentHarmonicY);
 }
