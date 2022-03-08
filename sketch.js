@@ -12,8 +12,7 @@ let roomSizeX = 700; // 7m wide
 let roomSizeY = 400; //4.6m deep
 let markerSize = 15; //person head ~15cm wide?
 
-//let canvasSizeX = roomSizeX;
-//let canvasSizeY = roomSizeY + 75; //extra room at the bottom for buttons etc
+let canvasSizeX, canvasSizeY; //decouple drawing from maths
 
 // movement variables
 let markerMovementInc = 5; //5cm increments
@@ -40,6 +39,13 @@ let lowestFreqY = 100;
 let textcolourX,textcolourY;
 
 function setup() {
+    //get dims of current div
+var currentWidth = document.getElementById('demo').clientWidth;
+var currentHeight = document.getElementById('demo').clientHeight;
+
+document.getElementById("extra").innerHTML=str(currentHeight);
+
+
     let canvas = createCanvas(roomSizeX, roomSizeY);
     canvas.parent('demo');
     frameRate(60);
@@ -77,6 +83,8 @@ function setup() {
 
     document.getElementById("xDirection").innerHTML = str(lowestFreqX * currentHarmonicX) + "Hz";
     document.getElementById("yDirection").innerHTML = str(lowestFreqY * currentHarmonicY) + "Hz";
+    document.getElementById("xSize").innerHTML = str(roomSizeX/100);
+    document.getElementById("ySize").innerHTML = str(roomSizeY/100);
 
 }
 

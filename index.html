@@ -22,13 +22,18 @@
         <p>Use WASD keys to move. Use mouse to change your position.</p>
 
     </div>
-    <div id="left" style="width:25%; height:100px; float:left">
-        <div id="buttons" style="position: relative;"></div>
-        <p id="xDirection">Freq x</p>
-        <p id="yDirection">Freq y</p>
+    <div id="left" style="width:25%; height:100%; float:left">
+        <div id="parameters">
+            <p>Room size: <span id="xSize">X</span>m by <span id="ySize">Y</span>m.</p>
+            <p>Oscillator 1: <span id="xDirection">Freq x</span></p>
+            <p>Oscillator 2: <span id="yDirection">Freq y</span></p>
+            <p id="extra">extra text</p>
+        </div>
+        <div id="buttons" style="position: relative"></div>
+
     </div>
     <div id="right" style="width:70%; height:100%; float:right">
-    <div id="demo"></div>
+    <div id="demo" style="height:400px"></div>
     </div>
 
     

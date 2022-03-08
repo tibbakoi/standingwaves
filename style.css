@@ -8,3 +8,7 @@ body {
 canvas {
     display: inline;
 }
+
+div {
+    border: 1px solid black;
+}
