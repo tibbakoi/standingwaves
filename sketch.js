@@ -38,18 +38,18 @@ let lowestFreqY = 100;
 
 let textcolourX, textcolourY;
 
+let currentWidth, currentHeight;
+
 function setup() {
     //get dims of current div
-    var currentWidth = document.getElementById('demo').clientWidth;
-    var currentHeight = document.getElementById('demo').clientHeight;
+    currentWidth = document.getElementById('demo').clientWidth;
+    currentHeight = document.getElementById('demo').clientHeight;
 
-    document.getElementById("extra").innerHTML = str(currentHeight);
-
+    document.getElementById("extra").innerHTML = str(currentWidth);
 
     let canvas = createCanvas(roomSizeX, roomSizeY);
     canvas.parent('demo');
     frameRate(60);
-
 
     //relating to X-direction generation
     oscX.amp(0);
@@ -93,11 +93,13 @@ function draw() {
     background(255);
     noFill();
     stroke(0);
+    //draw walls
     rect(0, 0, roomSizeX, roomSizeY);
-    drawDoor();
+    //draw door - standard door width ~ 75cm - therefore needs diameter of 150
+    arc(roomSizeX - 5, roomSizeY, 150, 150, PI, PI * (2.5 / 2), PIE);
     //10px cross for centre
-    line(width / 2 + 5, height / 2, width / 2 - 5, height / 2);
-    line(width / 2, height / 2 - 5, width / 2, height / 2 + 5);
+    line(roomSizeX / 2 + 5, roomSizeY / 2, roomSizeX / 2 - 5, roomSizeY / 2);
+    line(roomSizeX / 2, roomSizeY / 2 - 5, roomSizeX / 2, roomSizeY / 2 + 5);
 
 
     //changing marker location on keyPressed status rather than keyPressed function allows for press and hold
@@ -143,12 +145,6 @@ function drawMarker(xPos, yPos, size) {
     fill(150);
     noStroke();
     ellipse(xPos, yPos, size, size);
-}
-
-//Draw door in bottom right corner
-function drawDoor() {
-    //standard door width ~ 75cm - therefore needs diameter of 150
-    arc(roomSizeX - 5, roomSizeY, 150, 150, PI, PI * (2.5 / 2), PIE);
 }
 
 //Click mouse to move to new position
