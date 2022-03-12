@@ -36,14 +36,14 @@ let oscStatusY = 0;
 let currentHarmonicY = 1;
 let lowestFreqY = 100;
 
-let textcolourX,textcolourY;
+let textcolourX, textcolourY;
 
 function setup() {
     //get dims of current div
-var currentWidth = document.getElementById('demo').clientWidth;
-var currentHeight = document.getElementById('demo').clientHeight;
+    var currentWidth = document.getElementById('demo').clientWidth;
+    var currentHeight = document.getElementById('demo').clientHeight;
 
-document.getElementById("extra").innerHTML=str(currentHeight);
+    document.getElementById("extra").innerHTML = str(currentHeight);
 
 
     let canvas = createCanvas(roomSizeX, roomSizeY);
@@ -59,7 +59,7 @@ document.getElementById("extra").innerHTML=str(currentHeight);
     playButtonX.parent('buttons');
     playButtonX.mousePressed(playPauseAudioX);
 
-    harmonicSelectRadioX = createRadio('harmonicSelectRadioX').position(5,25);
+    harmonicSelectRadioX = createRadio('harmonicSelectRadioX').position(5, 25);
     harmonicSelectRadioX.parent('buttons');
     harmonicSelectRadioX.option('1');
     harmonicSelectRadioX.option('2');
@@ -83,8 +83,8 @@ document.getElementById("extra").innerHTML=str(currentHeight);
 
     document.getElementById("xDirection").innerHTML = str(lowestFreqX * currentHarmonicX) + "Hz";
     document.getElementById("yDirection").innerHTML = str(lowestFreqY * currentHarmonicY) + "Hz";
-    document.getElementById("xSize").innerHTML = str(roomSizeX/100);
-    document.getElementById("ySize").innerHTML = str(roomSizeY/100);
+    document.getElementById("xSize").innerHTML = str(roomSizeX / 100);
+    document.getElementById("ySize").innerHTML = str(roomSizeY / 100);
 
 }
 
@@ -95,6 +95,10 @@ function draw() {
     stroke(0);
     rect(0, 0, roomSizeX, roomSizeY);
     drawDoor();
+    //10px cross for centre
+    line(width / 2 + 5, height / 2, width / 2 - 5, height / 2);
+    line(width / 2, height / 2 - 5, width / 2, height / 2 + 5);
+
 
     //changing marker location on keyPressed status rather than keyPressed function allows for press and hold
     if (keyIsPressed) {
@@ -160,11 +164,11 @@ function playPauseAudioX() {
     if (oscStatusX === 0) {
         oscX.start();
         oscStatusX = 1;
-        document.getElementById("xDirection").style.color = color(0,255,0);;
+        document.getElementById("xDirection").style.color = color(0, 255, 0);;
     } else if (oscStatusX === 1) {
         oscX.stop();
         oscStatusX = 0;
-        document.getElementById("xDirection").style.color = color(0,0,0);;
+        document.getElementById("xDirection").style.color = color(0, 0, 0);;
     }
 }
 
@@ -173,12 +177,12 @@ function playPauseAudioY() {
     if (oscStatusY === 0) {
         oscY.start();
         oscStatusY = 1;
-        document.getElementById("yDirection").style.color = color(0,255,0);;
+        document.getElementById("yDirection").style.color = color(0, 255, 0);;
 
     } else if (oscStatusY === 1) {
         oscY.stop();
         oscStatusY = 0;
-        document.getElementById("yDirection").style.color = color(0,0,0);;
+        document.getElementById("yDirection").style.color = color(0, 0, 0);;
 
     }
 }
