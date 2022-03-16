@@ -45,7 +45,8 @@ function setup() {
     currentWidth = document.getElementById('demo').clientWidth;
     currentHeight = document.getElementById('demo').clientHeight;
 
-    document.getElementById("extra").innerHTML = str(currentWidth);
+    roomSizeX = currentWidth;
+    roomSizeY = currentHeight;
 
     let canvas = createCanvas(roomSizeX, roomSizeY);
     canvas.parent('demo');
@@ -55,24 +56,16 @@ function setup() {
     oscX.amp(0);
     oscX.freq(lowestFreqX * currentHarmonicX);
 
-    playButtonX = createButton('toggle play X').position(5, 5);
-    playButtonX.parent('buttons');
-    playButtonX.mousePressed(playPauseAudioX);
-
-    harmonicSelectRadioX = createRadio('harmonicSelectRadioX').position(5, 25);
-    harmonicSelectRadioX.parent('buttons');
-    harmonicSelectRadioX.option('1');
-    harmonicSelectRadioX.option('2');
-    harmonicSelectRadioX.option('3');
-    harmonicSelectRadioX.selected('1');
+    // harmonicSelectRadioX = createRadio('harmonicSelectRadioX').position(5, 25);
+    // harmonicSelectRadioX.parent('buttons');
+    // harmonicSelectRadioX.option('1');
+    // harmonicSelectRadioX.option('2');
+    // harmonicSelectRadioX.option('3');
+    // harmonicSelectRadioX.selected('1');
 
     //relating to Y-direction generation
     oscY.amp(0);
     oscY.freq(lowestFreqY * currentHarmonicY);
-
-    playButtonY = createButton('toggle play Y').position(5, 50);
-    playButtonY.parent('buttons');
-    playButtonY.mousePressed(playPauseAudioY);
 
     harmonicSelectRadioY = createRadio('harmonicSelectRadioY').position(5, 75);
     harmonicSelectRadioY.parent('buttons');
@@ -135,7 +128,7 @@ function draw() {
     oscX.amp(cos(radians(markerPosX / roomSizeX * currentHarmonicX / 2 * 360)), 0.05);
     oscY.amp(cos(radians(markerPosY / roomSizeY * currentHarmonicY / 2 * 360)), 0.05);
 
-    harmonicSelectRadioX.changed(selectHarmonicX);
+    //harmonicSelectRadioX.changed(selectHarmonicX);
     harmonicSelectRadioY.changed(selectHarmonicY);
 
 }
@@ -185,8 +178,15 @@ function playPauseAudioY() {
 
 //Change current harmonic for X-direction
 function selectHarmonicX() {
-    currentHarmonicX = int(harmonicSelectRadioX.value());
+    var harmonicsX = document.getElementsByName("harmonicSelectRadioX");
+
+    for(var i = 0; i < harmonicsX.length; i++) {
+        if(harmonicsX[i].checked)
+        currentHarmonicX = harmonicsX[i].value;
+    }
+
     document.getElementById("xDirection").innerHTML = str(lowestFreqX * currentHarmonicX) + "Hz";
+
     oscX.freq(lowestFreqX * currentHarmonicX);
 }
 
@@ -196,3 +196,17 @@ function selectHarmonicY() {
     document.getElementById("yDirection").innerHTML = str(lowestFreqY * currentHarmonicY) + "Hz";
     oscY.freq(lowestFreqY * currentHarmonicY);
 }
+
+function windowResized() {
+    currentWidth = document.getElementById('demo').clientWidth;
+    currentHeight = document.getElementById('demo').clientHeight;
+
+    document.getElementById("extra").innerHTML = str(currentHeight);
+    roomSizeX = currentWidth;
+    roomSizeY = currentHeight;
+
+    document.getElementById("xSize").innerHTML = str(roomSizeX / 100);
+    document.getElementById("ySize").innerHTML = str(roomSizeY / 100);
+
+    resizeCanvas(roomSizeX, roomSizeY);
+  }
