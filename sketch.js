@@ -56,23 +56,9 @@ function setup() {
     oscX.amp(0);
     oscX.freq(lowestFreqX * currentHarmonicX);
 
-    // harmonicSelectRadioX = createRadio('harmonicSelectRadioX').position(5, 25);
-    // harmonicSelectRadioX.parent('buttons');
-    // harmonicSelectRadioX.option('1');
-    // harmonicSelectRadioX.option('2');
-    // harmonicSelectRadioX.option('3');
-    // harmonicSelectRadioX.selected('1');
-
     //relating to Y-direction generation
     oscY.amp(0);
     oscY.freq(lowestFreqY * currentHarmonicY);
-
-    harmonicSelectRadioY = createRadio('harmonicSelectRadioY').position(5, 75);
-    harmonicSelectRadioY.parent('buttons');
-    harmonicSelectRadioY.option('1');
-    harmonicSelectRadioY.option('2');
-    harmonicSelectRadioY.option('3');
-    harmonicSelectRadioY.selected('1');
 
     document.getElementById("xDirection").innerHTML = str(lowestFreqX * currentHarmonicX) + "Hz";
     document.getElementById("yDirection").innerHTML = str(lowestFreqY * currentHarmonicY) + "Hz";
@@ -127,9 +113,6 @@ function draw() {
     //change amplitude accordingly based on markerPosX and markerPosY, ramping over 0.05seconds
     oscX.amp(cos(radians(markerPosX / roomSizeX * currentHarmonicX / 2 * 360)), 0.05);
     oscY.amp(cos(radians(markerPosY / roomSizeY * currentHarmonicY / 2 * 360)), 0.05);
-
-    //harmonicSelectRadioX.changed(selectHarmonicX);
-    harmonicSelectRadioY.changed(selectHarmonicY);
 
 }
 
@@ -192,7 +175,14 @@ function selectHarmonicX() {
 
 //Change current harmonic for Y-direction
 function selectHarmonicY() {
-    currentHarmonicY = int(harmonicSelectRadioY.value());
+    var harmonicsY = document.getElementsByName("harmonicSelectRadioY");
+
+    for(var i = 0; i < harmonicsY.length; i++) {
+        if(harmonicsY[i].checked)
+        currentHarmonicY = harmonicsY[i].value;
+    }
+
+    //currentHarmonicY = int(harmonicSelectRadioY.value());
     document.getElementById("yDirection").innerHTML = str(lowestFreqY * currentHarmonicY) + "Hz";
     oscY.freq(lowestFreqY * currentHarmonicY);
 }
