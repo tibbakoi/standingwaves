@@ -45,8 +45,8 @@ function setup() {
     currentWidth = document.getElementById('demo').clientWidth;
     currentHeight = document.getElementById('demo').clientHeight;
 
-    roomSizeX = currentWidth;
-    roomSizeY = currentHeight;
+    roomSizeX = 700;
+    roomSizeY = 400;
 
     let canvas = createCanvas(roomSizeX, roomSizeY);
     canvas.parent('demo');
