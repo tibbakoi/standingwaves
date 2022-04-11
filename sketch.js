@@ -15,7 +15,7 @@ let markerSize = 15; //person head ~15cm wide?
 let canvasSizeX, canvasSizeY; //decouple drawing from maths
 
 // movement variables
-let markerMovementInc = 5; //5cm increments
+let markerMovementInc = 3; //5cm increments
 let markerPermitMovement = [1, 1, 1, 1]; //Left right up down
 
 // starting position variables - bottom right
