@@ -136,11 +136,12 @@ function playPauseAudioX() {
     if (oscStatusX === 0) {
         oscX.start();
         oscStatusX = 1;
-        document.getElementById("xDirection").style.color = color(0, 255, 0);;
+        //document.getElementById("xDirection").style.color = color(0, 255, 0);
     } else if (oscStatusX === 1) {
         oscX.stop();
         oscStatusX = 0;
-        document.getElementById("xDirection").style.color = color(0, 0, 0);;
+        //document.getElementById("xDirection").style.color = color(0, 0, 0);
+
     }
 }
 
@@ -149,13 +150,12 @@ function playPauseAudioY() {
     if (oscStatusY === 0) {
         oscY.start();
         oscStatusY = 1;
-        document.getElementById("yDirection").style.color = color(0, 255, 0);;
+        //document.getElementById("yDirection").style.color = color(0, 255, 0);;
 
     } else if (oscStatusY === 1) {
         oscY.stop();
         oscStatusY = 0;
-        document.getElementById("yDirection").style.color = color(0, 0, 0);;
-
+        //document.getElementById("yDirection").style.color = color(0, 0, 0);;
     }
 }
 
