@@ -12,20 +12,24 @@ let roomSizeX = 700; // 7m wide
 let roomSizeY = 400; //4.6m deep
 let markerSize = 15; //person head ~15cm wide?
 
-let canvasSizeX, canvasSizeY; //decouple drawing from maths
+//decouple drawing maths from physics maths
+let canvasSizeX = 700;
+let canvasSizeY = 400;
 
 // movement variables
 let markerMovementInc = 3; //5cm increments
 let markerPermitMovement = [1, 1, 1, 1]; //Left right up down
 
 // starting position
-let markerPosX = 50;
-let markerPosY = 25;
+let markerPosXDefault = 50;
+let markerPosYDefault = 25;
+let markerPosX=markerPosXDefault;
+let markerPosY=markerPosYDefault;
 
 // audio variables
 let oscX = new p5.Oscillator('sine');
 let oscY = new p5.Oscillator('sine');
-let playButtonX, harmonicSelectRadioX, playButtonY, harmonicSelectRadioY;
+let playButtonX, harmonicSelectRadioX, playButtonY, harmonicSelectRadioY, resetButton;
 
 //default values
 let oscStatusX = 0;
@@ -41,12 +45,6 @@ let textcolourX, textcolourY;
 let currentWidth, currentHeight;
 
 function setup() {
-    //get dims of current div
-    currentWidth = document.getElementById('demo').clientWidth;
-    currentHeight = document.getElementById('demo').clientHeight;
-
-    roomSizeX = 700;
-    roomSizeY = 400;
 
     let canvas = createCanvas(roomSizeX, roomSizeY);
     canvas.parent('demo');
@@ -54,14 +52,14 @@ function setup() {
 
     //relating to X-direction generation
     oscX.amp(0);
-    oscX.freq(lowestFreqX * currentHarmonicX);
+    setOscFreq("X", currentHarmonicX);
+    setFreqLabel("X",currentHarmonicX);
 
     //relating to Y-direction generation
     oscY.amp(0);
-    oscY.freq(lowestFreqY * currentHarmonicY);
+    setOscFreq("Y",currentHarmonicY);
+    setFreqLabel("Y",currentHarmonicY);
 
-    document.getElementById("xDirection").innerHTML = str(lowestFreqX * currentHarmonicX) + "Hz";
-    document.getElementById("yDirection").innerHTML = str(lowestFreqY * currentHarmonicY) + "Hz";
     document.getElementById("xSize").innerHTML = str(roomSizeX / 100);
     document.getElementById("ySize").innerHTML = str(roomSizeY / 100);
 
@@ -117,7 +115,7 @@ function draw() {
 
 //Draw marker at given position and size
 function drawMarker(xPos, yPos, size) {
-    fill(150);
+    fill(4,170,109);
     noStroke();
     ellipse(xPos, yPos, size, size);
 }
@@ -135,12 +133,9 @@ function playPauseAudioX() {
     if (oscStatusX === 0) {
         oscX.start();
         oscStatusX = 1;
-        //document.getElementById("xDirection").style.color = color(0, 255, 0);
     } else if (oscStatusX === 1) {
         oscX.stop();
         oscStatusX = 0;
-        //document.getElementById("xDirection").style.color = color(0, 0, 0);
-
     }
 }
 
@@ -149,12 +144,9 @@ function playPauseAudioY() {
     if (oscStatusY === 0) {
         oscY.start();
         oscStatusY = 1;
-        //document.getElementById("yDirection").style.color = color(0, 255, 0);;
-
     } else if (oscStatusY === 1) {
         oscY.stop();
         oscStatusY = 0;
-        //document.getElementById("yDirection").style.color = color(0, 0, 0);;
     }
 }
 
@@ -167,9 +159,8 @@ function selectHarmonicX() {
         currentHarmonicX = harmonicsX[i].value;
     }
 
-    document.getElementById("xDirection").innerHTML = str(lowestFreqX * currentHarmonicX) + "Hz";
-
-    oscX.freq(lowestFreqX * currentHarmonicX);
+    setFreqLabel("X",currentHarmonicX);
+    setOscFreq("X",currentHarmonicX);
 }
 
 //Change current harmonic for Y-direction
@@ -181,21 +172,32 @@ function selectHarmonicY() {
         currentHarmonicY = harmonicsY[i].value;
     }
 
-    //currentHarmonicY = int(harmonicSelectRadioY.value());
-    document.getElementById("yDirection").innerHTML = str(lowestFreqY * currentHarmonicY) + "Hz";
-    oscY.freq(lowestFreqY * currentHarmonicY);
+    setFreqLabel("Y",currentHarmonicY);
+    setOscFreq("Y",currentHarmonicY);
 }
 
-function windowResized() {
-    currentWidth = document.getElementById('demo').clientWidth;
-    currentHeight = document.getElementById('demo').clientHeight;
+function setOscFreq(oscIndicator, harmonic) {
+    switch(oscIndicator){
+        case "X":
+        oscX.freq(lowestFreqX * harmonic);
+        break;
+        case"Y":
+        oscY.freq(lowestFreqY * harmonic);
+        break;
+    }
+}
 
-    document.getElementById("extra").innerHTML = str(currentHeight);
-    roomSizeX = currentWidth;
-    roomSizeY = currentHeight;
+function setFreqLabel(labelIndicator, harmonic) {
+    switch(labelIndicator){
+        case "X":
+        document.getElementById("xDirection").innerHTML = str(lowestFreqX * harmonic) + "Hz";
+        break;
+        case "Y":
+        document.getElementById("yDirection").innerHTML = str(lowestFreqY * harmonic) + "Hz";
+        break;
+    }
+}
 
-    document.getElementById("xSize").innerHTML = str(roomSizeX / 100);
-    document.getElementById("ySize").innerHTML = str(roomSizeY / 100);
+function resetAll(){
 
-    resizeCanvas(roomSizeX, roomSizeY);
-  }
+}

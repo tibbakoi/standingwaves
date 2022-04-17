@@ -18,6 +18,12 @@ body {
 
 /* UI element formatting*/
 
+button{
+  background-color: #04AA6D;
+  color: white;
+  margin-bottom: 10px;
+}
+
 /* switch formatting from https://www.w3schools.com/howto/howto_css_switch.asp */
 .switch {
   position: relative;

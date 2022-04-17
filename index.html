@@ -35,7 +35,7 @@
         <label><input type="radio" name="harmonicSelectRadioX" value="3" onchange="selectHarmonicX()">3rd harmonic</label>
         </p>
     
-    <p><strong><i class="fa-solid fa-arrow-up"></i><i class="fa-solid fa-arrow-down"></i>&nbsp;&nbsp;&nbsp;&nbsp;Oscillator: <span id="yDirection">Freq y</span></strong>
+        <p><strong><i class="fa-solid fa-arrow-up"></i><i class="fa-solid fa-arrow-down"></i>&nbsp;&nbsp;&nbsp;&nbsp;Oscillator: <span id="yDirection">Freq y</span></strong>
         <label class="switch">
             <input type="checkbox" onclick="playPauseAudioY()">
             <span class="slider round"></span>
@@ -44,6 +44,7 @@
         <label><input type="radio" name="harmonicSelectRadioY" value="2" onchange="selectHarmonicY()">2nd harmonic</label>
         <label><input type="radio" name="harmonicSelectRadioY" value="3" onchange="selectHarmonicY()">3rd harmonic</label>
         </p>
+        <button type="button" onclick="resetAll()">Reset</button>
     </div>
     <div id="demo">
        <noscript><p>Please use a modern browser with JavaScript enabled to see the demo.</p></noscript>
@@ -51,8 +52,9 @@
     <div id="nodemodisplay">
         <p>This content requires a wider browser window.</p>
     </div>
+    <div><br></div>
 </body>
 
-<footer>Developed by Kat Young</footer>
+<footer>&copy; 2022 Kat Young</footer>
 
 </html>
