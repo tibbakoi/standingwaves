@@ -6,18 +6,18 @@ https://github.com/tibbakoi
 2022
 */
 
-//size variables - using 1px = 1cm
+//size variables
 // for reference, gen6 teaching room is 7m x 5.6m x 2.6m
-let roomSizeX = 700; // 7m wide
-let roomSizeY = 400; //4.6m deep
-let markerSize = 15; //person head ~15cm wide?
+let roomSizeX = 350; // 7m wide
+let roomSizeY = 240; //4.6m deep
 
 //decouple drawing maths from physics maths
-let canvasSizeX = 700;
-let canvasSizeY = 400;
+let canvasSizeX = 650;
+let canvasSizeY = 380;
+let markerSize = 15; //person head ~15cm wide?
 
 // movement variables
-let markerMovementInc = 3; //5cm increments
+let markerMovementInc = 3; //3cm increments
 let markerPermitMovement = [1, 1, 1, 1]; //Left right up down
 
 // starting position
@@ -29,6 +29,7 @@ let markerPosY=markerPosYDefault;
 // audio variables
 let oscX = new p5.Oscillator('sine');
 let oscY = new p5.Oscillator('sine');
+let ampAnalyser;
 let playButtonX, harmonicSelectRadioX, playButtonY, harmonicSelectRadioY, resetButton;
 
 //default values
@@ -40,13 +41,9 @@ let oscStatusY = 0;
 let currentHarmonicY = 1;
 let lowestFreqY = 100;
 
-let textcolourX, textcolourY;
-
-let currentWidth, currentHeight;
-
 function setup() {
 
-    let canvas = createCanvas(roomSizeX, roomSizeY);
+    let canvas = createCanvas(canvasSizeX, canvasSizeY);
     canvas.parent('demo');
     frameRate(60);
 
@@ -63,6 +60,7 @@ function setup() {
     document.getElementById("xSize").innerHTML = str(roomSizeX / 100);
     document.getElementById("ySize").innerHTML = str(roomSizeY / 100);
 
+    ampAnalyser = new p5.Amplitude();
 }
 
 function draw() {
@@ -71,12 +69,12 @@ function draw() {
     noFill();
     stroke(0);
     //draw walls
-    rect(0, 0, roomSizeX, roomSizeY);
+    rect(0, 0, canvasSizeX, canvasSizeY);
     //draw door - standard door width ~ 75cm - therefore needs diameter of 150
     arc(5, 0, 150, 150, 0, PI*0.3, PIE);
     //10px cross for centre
-    line(roomSizeX / 2 + 5, roomSizeY / 2, roomSizeX / 2 - 5, roomSizeY / 2);
-    line(roomSizeX / 2, roomSizeY / 2 - 5, roomSizeX / 2, roomSizeY / 2 + 5);
+    line(canvasSizeX / 2 + 5, canvasSizeY / 2, canvasSizeX / 2 - 5, canvasSizeY / 2);
+    line(canvasSizeX / 2, canvasSizeY / 2 - 5, canvasSizeX / 2, canvasSizeY / 2 + 5);
 
     //changing marker location on keyPressed status rather than keyPressed function allows for press and hold
     if (keyIsPressed) {
@@ -84,9 +82,9 @@ function draw() {
         if (keyCode === 65 || keyCode === 68 || keyCode === 87 || keyCode === 83) {
             // determine where marker can go based on current position - is the next increment going to take outside of walls?
             if (markerPosX - markerMovementInc <= 0) { markerPermitMovement[0] = 0; } //can't go left
-            if (markerPosX + markerMovementInc >= roomSizeX) { markerPermitMovement[1] = 0; } //can't go right
+            if (markerPosX + markerMovementInc >= canvasSizeX) { markerPermitMovement[1] = 0; } //can't go right
             if (markerPosY - markerMovementInc <= 0) { markerPermitMovement[2] = 0; } //can't go up
-            if (markerPosY + markerMovementInc >= roomSizeY) { markerPermitMovement[3] = 0; } //can't go down
+            if (markerPosY + markerMovementInc >= canvasSizeY) { markerPermitMovement[3] = 0; } //can't go down
 
             //change marker position based on permitted movements
             if (keyCode === 68 && markerPermitMovement[1]) {
@@ -108,8 +106,12 @@ function draw() {
     drawMarker(markerPosX, markerPosY, markerSize);
 
     //change amplitude accordingly based on markerPosX and markerPosY, ramping over 0.05seconds
-    oscX.amp(cos(radians(markerPosX / roomSizeX * currentHarmonicX / 2 * 360)), 0.05);
-    oscY.amp(cos(radians(markerPosY / roomSizeY * currentHarmonicY / 2 * 360)), 0.05);
+    oscX.amp(cos(radians(markerPosX / canvasSizeX * currentHarmonicX / 2 * 360)), 0.05);
+    oscY.amp(cos(radians(markerPosY / canvasSizeY * currentHarmonicY / 2 * 360)), 0.05);
+
+    if (frameCount % 5 == true){
+        document.getElementById("soundLevel").innerHTML = str(ampAnalyser.getLevel());
+    }
 
 }
 
@@ -122,7 +124,7 @@ function drawMarker(xPos, yPos, size) {
 
 //Click mouse to move to new position
 function mousePressed() {
-    if (mouseX <= roomSizeX && mouseX >= 0 && mouseY >= 0 && mouseY <= roomSizeY) {
+    if (mouseX <= canvasSizeX && mouseX >= 0 && mouseY >= 0 && mouseY <= canvasSizeY) {
         markerPosX = mouseX;
         markerPosY = mouseY;
     }
