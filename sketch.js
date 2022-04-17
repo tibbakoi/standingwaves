@@ -18,9 +18,9 @@ let canvasSizeX, canvasSizeY; //decouple drawing from maths
 let markerMovementInc = 3; //5cm increments
 let markerPermitMovement = [1, 1, 1, 1]; //Left right up down
 
-// starting position variables - bottom right
-let markerPosX = roomSizeX - 50;
-let markerPosY = roomSizeY - 10;
+// starting position
+let markerPosX = 50;
+let markerPosY = 25;
 
 // audio variables
 let oscX = new p5.Oscillator('sine');
@@ -75,11 +75,10 @@ function draw() {
     //draw walls
     rect(0, 0, roomSizeX, roomSizeY);
     //draw door - standard door width ~ 75cm - therefore needs diameter of 150
-    arc(roomSizeX - 5, roomSizeY, 150, 150, PI, PI * (2.5 / 2), PIE);
+    arc(5, 0, 150, 150, 0, PI*0.3, PIE);
     //10px cross for centre
     line(roomSizeX / 2 + 5, roomSizeY / 2, roomSizeX / 2 - 5, roomSizeY / 2);
     line(roomSizeX / 2, roomSizeY / 2 - 5, roomSizeX / 2, roomSizeY / 2 + 5);
-
 
     //changing marker location on keyPressed status rather than keyPressed function allows for press and hold
     if (keyIsPressed) {
