@@ -8,8 +8,8 @@ https://github.com/tibbakoi
 
 //size variables
 // for reference, gen6 teaching room is 7m x 5.6m x 2.6m
-let roomSizeX = 350; // 7m wide
-let roomSizeY = 240; //4.6m deep
+let roomSizeX = 3.8;
+let roomSizeY = 2.4;
 
 //decouple drawing maths from physics maths
 let canvasSizeX = 650;
@@ -17,7 +17,7 @@ let canvasSizeY = 380;
 let markerSize = 15; //person head ~15cm wide?
 
 // movement variables
-let markerMovementInc = 3; //3cm increments
+let markerMovementInc = 2; //3cm increments
 let markerPermitMovement = [1, 1, 1, 1]; //Left right up down
 
 // starting position
@@ -35,17 +35,21 @@ let playButtonX, harmonicSelectRadioX, playButtonY, harmonicSelectRadioY, resetB
 //default values
 let oscStatusX = 0;
 let currentHarmonicX = 1;
-let lowestFreqX = 175;
+let lowestFreqX;
 
 let oscStatusY = 0;
 let currentHarmonicY = 1;
-let lowestFreqY = 100;
+let lowestFreqY;
 
 function setup() {
 
     let canvas = createCanvas(canvasSizeX, canvasSizeY);
     canvas.parent('demo');
     frameRate(60);
+
+    //calculate lowest room modes in X and Y directions based on room size
+    lowestFreqX = round(calculateLowestRoomModeFreq(roomSizeX),2);
+    lowestFreqY = round(calculateLowestRoomModeFreq(roomSizeY),2);
 
     //relating to X-direction generation
     oscX.amp(0);
@@ -57,8 +61,11 @@ function setup() {
     setOscFreq("Y",currentHarmonicY);
     setFreqLabel("Y",currentHarmonicY);
 
-    document.getElementById("xSize").innerHTML = str(roomSizeX / 100);
-    document.getElementById("ySize").innerHTML = str(roomSizeY / 100);
+    document.getElementById("xSize").innerHTML = str(roomSizeX);
+    document.getElementById("ySize").innerHTML = str(roomSizeY);
+
+    document.getElementById("lowestMode").innerHTML = str(min(lowestFreqX,lowestFreqY));
+
 
     ampAnalyser = new p5.Amplitude();
 }
@@ -110,7 +117,7 @@ function draw() {
     oscY.amp(cos(radians(markerPosY / canvasSizeY * currentHarmonicY / 2 * 360)), 0.05);
 
     if (frameCount % 5 == true){
-        document.getElementById("soundLevel").innerHTML = str(ampAnalyser.getLevel());
+        document.getElementById("soundLevel").innerHTML = str(round(ampAnalyser.getLevel(),2));
     }
 
 }
@@ -192,14 +199,45 @@ function setOscFreq(oscIndicator, harmonic) {
 function setFreqLabel(labelIndicator, harmonic) {
     switch(labelIndicator){
         case "X":
-        document.getElementById("xDirection").innerHTML = str(lowestFreqX * harmonic) + "Hz";
+        document.getElementById("xDirection").innerHTML = str(round(lowestFreqX * harmonic,2)) + "Hz";
         break;
         case "Y":
-        document.getElementById("yDirection").innerHTML = str(lowestFreqY * harmonic) + "Hz";
+        document.getElementById("yDirection").innerHTML = str(round(lowestFreqY * harmonic,2)) + "Hz";
         break;
     }
 }
 
+ function calculateLowestRoomModeFreq(dimension){
+    var c = 343;
+    var mode = 1;
+    var freq = c / ((2 * dimension)/mode);
+
+    return freq;
+
+ }
+
 function resetAll(){
+
+    //reset X
+    currentHarmonicX = 1;
+    setFreqLabel("X", currentHarmonicX);
+    setOscFreq("X",currentHarmonicX);
+    document.getElementById("harmonicX_1").checked=true;
+
+    if (oscStatusX==1){
+        document.getElementById("toggleAudioX").click();
+        oscStatusX = 0;
+    }
+
+    //reset Y
+    currentHarmonicY = 1;
+    setFreqLabel("Y", currentHarmonicY);
+    setOscFreq("Y",currentHarmonicY);
+    document.getElementById("harmonicY_1").checked=true;
+
+    if (oscStatusY==1){
+        document.getElementById("toggleAudioY").click();
+        oscStatusY = 0;
+    }
 
 }
