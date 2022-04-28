@@ -66,7 +66,6 @@ function setup() {
 
     document.getElementById("lowestMode").innerHTML = str(min(lowestFreqX,lowestFreqY));
 
-
     ampAnalyser = new p5.Amplitude();
 }
 
@@ -116,7 +115,7 @@ function draw() {
     oscX.amp(cos(radians(markerPosX / canvasSizeX * currentHarmonicX / 2 * 360)), 0.05);
     oscY.amp(cos(radians(markerPosY / canvasSizeY * currentHarmonicY / 2 * 360)), 0.05);
 
-    if (frameCount % 5 == true){
+    if (frameCount % 2 == true){
         document.getElementById("soundLevel").innerHTML = str(round(ampAnalyser.getLevel(),2));
     }
 
@@ -239,5 +238,9 @@ function resetAll(){
         document.getElementById("toggleAudioY").click();
         oscStatusY = 0;
     }
+
+    //reset marker
+    markerPosX = markerPosXDefault;
+    markerPosY = markerPosYDefault;
 
 }
