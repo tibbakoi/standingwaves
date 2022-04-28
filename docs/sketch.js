@@ -6,73 +6,67 @@ https://github.com/tibbakoi
 2022
 */
 
-//size variables - using 1px = 1cm
+//size variables
 // for reference, gen6 teaching room is 7m x 5.6m x 2.6m
-let roomSizeX = 700; // 7m wide
-let roomSizeY = 460; //4.6m deep
+let roomSizeX = 3.8;
+let roomSizeY = 2.4;
+
+//decouple drawing maths from physics maths
+let canvasSizeX = 650;
+let canvasSizeY = 380;
 let markerSize = 15; //person head ~15cm wide?
 
-let canvasSizeX = roomSizeX;
-let canvasSizeY = roomSizeY + 75; //extra room at the bottom for buttons etc
-
 // movement variables
-let markerMovementInc = 5; //5cm increments
+let markerMovementInc = 2; //3cm increments
 let markerPermitMovement = [1, 1, 1, 1]; //Left right up down
 
-// starting position variables - bottom right
-let markerPosX = roomSizeX - 50;
-let markerPosY = roomSizeY - 10;
+// starting position
+let markerPosXDefault = 50;
+let markerPosYDefault = 25;
+let markerPosX=markerPosXDefault;
+let markerPosY=markerPosYDefault;
 
 // audio variables
 let oscX = new p5.Oscillator('sine');
 let oscY = new p5.Oscillator('sine');
-let playButtonX, harmonicSelectRadioX, playButtonY, harmonicSelectRadioY;
+let ampAnalyser;
+let playButtonX, harmonicSelectRadioX, playButtonY, harmonicSelectRadioY, resetButton;
 
 //default values
 let oscStatusX = 0;
 let currentHarmonicX = 1;
-let lowestFreqX = 175;
+let lowestFreqX;
 
 let oscStatusY = 0;
 let currentHarmonicY = 1;
-let lowestFreqY = 100;
-
-let textcolourX,textcolourY;
+let lowestFreqY;
 
 function setup() {
+
     let canvas = createCanvas(canvasSizeX, canvasSizeY);
     canvas.parent('demo');
     frameRate(60);
 
-    textcolourX = color(0,0,0); //default
-    textcolourY = color(0,0,0); //default
+    //calculate lowest room modes in X and Y directions based on room size
+    lowestFreqX = round(calculateLowestRoomModeFreq(roomSizeX),2);
+    lowestFreqY = round(calculateLowestRoomModeFreq(roomSizeY),2);
 
     //relating to X-direction generation
     oscX.amp(0);
-    oscX.freq(lowestFreqX * currentHarmonicX);
-
-    playButtonX = createButton('toggle play X').position(10, roomSizeY + 125);
-    playButtonX.mousePressed(playPauseAudioX);
-
-    harmonicSelectRadioX = createRadio('harmonicSelectRadioX').position(10, roomSizeY + 150);
-    harmonicSelectRadioX.option('1');
-    harmonicSelectRadioX.option('2');
-    harmonicSelectRadioX.option('3');
-    harmonicSelectRadioX.selected('1');
+    setOscFreq("X", currentHarmonicX);
+    setFreqLabel("X",currentHarmonicX);
 
     //relating to Y-direction generation
     oscY.amp(0);
-    oscY.freq(lowestFreqY * currentHarmonicY);
+    setOscFreq("Y",currentHarmonicY);
+    setFreqLabel("Y",currentHarmonicY);
 
-    playButtonY = createButton('toggle play Y').position(175, roomSizeY + 125);
-    playButtonY.mousePressed(playPauseAudioY);
+    document.getElementById("xSize").innerHTML = str(roomSizeX);
+    document.getElementById("ySize").innerHTML = str(roomSizeY);
 
-    harmonicSelectRadioY = createRadio('harmonicSelectRadioY').position(175, roomSizeY + 150);
-    harmonicSelectRadioY.option('1');
-    harmonicSelectRadioY.option('2');
-    harmonicSelectRadioY.option('3');
-    harmonicSelectRadioY.selected('1');
+    document.getElementById("lowestMode").innerHTML = str(min(lowestFreqX,lowestFreqY));
 
+    ampAnalyser = new p5.Amplitude();
 }
 
 function draw() {
@@ -80,18 +74,13 @@ function draw() {
     background(255);
     noFill();
     stroke(0);
+    //draw walls
     rect(0, 0, canvasSizeX, canvasSizeY);
-    rect(0, 0, roomSizeX, roomSizeY);
-    drawDoor();
-
-    //changing elements
-    textSize(15);
-    noStroke();
-    fill(textcolourX);
-    text(str(lowestFreqX * currentHarmonicX) + "Hz", 105, roomSizeY + 27);
-    fill(textcolourY);
-    text(str(lowestFreqY * currentHarmonicY) + "Hz", 275, roomSizeY + 27);
-    noFill();
+    //draw door - standard door width ~ 75cm - therefore needs diameter of 150
+    arc(5, 0, 150, 150, 0, PI*0.3, PIE);
+    //10px cross for centre
+    line(canvasSizeX / 2 + 5, canvasSizeY / 2, canvasSizeX / 2 - 5, canvasSizeY / 2);
+    line(canvasSizeX / 2, canvasSizeY / 2 - 5, canvasSizeX / 2, canvasSizeY / 2 + 5);
 
     //changing marker location on keyPressed status rather than keyPressed function allows for press and hold
     if (keyIsPressed) {
@@ -99,9 +88,9 @@ function draw() {
         if (keyCode === 65 || keyCode === 68 || keyCode === 87 || keyCode === 83) {
             // determine where marker can go based on current position - is the next increment going to take outside of walls?
             if (markerPosX - markerMovementInc <= 0) { markerPermitMovement[0] = 0; } //can't go left
-            if (markerPosX + markerMovementInc >= roomSizeX) { markerPermitMovement[1] = 0; } //can't go right
+            if (markerPosX + markerMovementInc >= canvasSizeX) { markerPermitMovement[1] = 0; } //can't go right
             if (markerPosY - markerMovementInc <= 0) { markerPermitMovement[2] = 0; } //can't go up
-            if (markerPosY + markerMovementInc >= roomSizeY) { markerPermitMovement[3] = 0; } //can't go down
+            if (markerPosY + markerMovementInc >= canvasSizeY) { markerPermitMovement[3] = 0; } //can't go down
 
             //change marker position based on permitted movements
             if (keyCode === 68 && markerPermitMovement[1]) {
@@ -123,30 +112,25 @@ function draw() {
     drawMarker(markerPosX, markerPosY, markerSize);
 
     //change amplitude accordingly based on markerPosX and markerPosY, ramping over 0.05seconds
-    oscX.amp(cos(radians(markerPosX / roomSizeX * currentHarmonicX / 2 * 360)), 0.05);
-    oscY.amp(cos(radians(markerPosY / roomSizeY * currentHarmonicY / 2 * 360)), 0.05);
+    oscX.amp(cos(radians(markerPosX / canvasSizeX * currentHarmonicX / 2 * 360)), 0.05);
+    oscY.amp(cos(radians(markerPosY / canvasSizeY * currentHarmonicY / 2 * 360)), 0.05);
 
-    harmonicSelectRadioX.changed(selectHarmonicX);
-    harmonicSelectRadioY.changed(selectHarmonicY);
+    if (frameCount % 2 == true){
+        document.getElementById("soundLevel").innerHTML = str(round(ampAnalyser.getLevel(),2));
+    }
 
 }
 
 //Draw marker at given position and size
 function drawMarker(xPos, yPos, size) {
-    fill(150);
+    fill(4,170,109);
     noStroke();
     ellipse(xPos, yPos, size, size);
 }
 
-//Draw door in bottom right corner
-function drawDoor() {
-    //standard door width ~ 75cm - therefore needs diameter of 150
-    arc(roomSizeX - 5, roomSizeY, 150, 150, PI, PI * (2.5 / 2), PIE);
-}
-
 //Click mouse to move to new position
 function mousePressed() {
-    if (mouseX <= roomSizeX && mouseX >= 0 && mouseY >= 0 && mouseY <= roomSizeY) {
+    if (mouseX <= canvasSizeX && mouseX >= 0 && mouseY >= 0 && mouseY <= canvasSizeY) {
         markerPosX = mouseX;
         markerPosY = mouseY;
     }
@@ -157,11 +141,9 @@ function playPauseAudioX() {
     if (oscStatusX === 0) {
         oscX.start();
         oscStatusX = 1;
-        textcolourX = color(0,255,0);
     } else if (oscStatusX === 1) {
         oscX.stop();
         oscStatusX = 0;
-        textcolourX = color(0,0,0);
     }
 }
 
@@ -170,22 +152,95 @@ function playPauseAudioY() {
     if (oscStatusY === 0) {
         oscY.start();
         oscStatusY = 1;
-        textcolourY = color(0,255,0);
     } else if (oscStatusY === 1) {
         oscY.stop();
         oscStatusY = 0;
-        textcolourY = color(0,0,0);
     }
 }
 
 //Change current harmonic for X-direction
 function selectHarmonicX() {
-    currentHarmonicX = int(harmonicSelectRadioX.value());
-    oscX.freq(lowestFreqX * currentHarmonicX);
+    var harmonicsX = document.getElementsByName("harmonicSelectRadioX");
+
+    for(var i = 0; i < harmonicsX.length; i++) {
+        if(harmonicsX[i].checked)
+        currentHarmonicX = harmonicsX[i].value;
+    }
+
+    setFreqLabel("X",currentHarmonicX);
+    setOscFreq("X",currentHarmonicX);
 }
 
 //Change current harmonic for Y-direction
 function selectHarmonicY() {
-    currentHarmonicY = int(harmonicSelectRadioY.value());
-    oscY.freq(lowestFreqY * currentHarmonicY);
+    var harmonicsY = document.getElementsByName("harmonicSelectRadioY");
+
+    for(var i = 0; i < harmonicsY.length; i++) {
+        if(harmonicsY[i].checked)
+        currentHarmonicY = harmonicsY[i].value;
+    }
+
+    setFreqLabel("Y",currentHarmonicY);
+    setOscFreq("Y",currentHarmonicY);
+}
+
+function setOscFreq(oscIndicator, harmonic) {
+    switch(oscIndicator){
+        case "X":
+        oscX.freq(lowestFreqX * harmonic);
+        break;
+        case"Y":
+        oscY.freq(lowestFreqY * harmonic);
+        break;
+    }
+}
+
+function setFreqLabel(labelIndicator, harmonic) {
+    switch(labelIndicator){
+        case "X":
+        document.getElementById("xDirection").innerHTML = str(round(lowestFreqX * harmonic,2)) + "Hz";
+        break;
+        case "Y":
+        document.getElementById("yDirection").innerHTML = str(round(lowestFreqY * harmonic,2)) + "Hz";
+        break;
+    }
+}
+
+ function calculateLowestRoomModeFreq(dimension){
+    var c = 343;
+    var mode = 1;
+    var freq = c / ((2 * dimension)/mode);
+
+    return freq;
+
+ }
+
+function resetAll(){
+
+    //reset X
+    currentHarmonicX = 1;
+    setFreqLabel("X", currentHarmonicX);
+    setOscFreq("X",currentHarmonicX);
+    document.getElementById("harmonicX_1").checked=true;
+
+    if (oscStatusX==1){
+        document.getElementById("toggleAudioX").click();
+        oscStatusX = 0;
+    }
+
+    //reset Y
+    currentHarmonicY = 1;
+    setFreqLabel("Y", currentHarmonicY);
+    setOscFreq("Y",currentHarmonicY);
+    document.getElementById("harmonicY_1").checked=true;
+
+    if (oscStatusY==1){
+        document.getElementById("toggleAudioY").click();
+        oscStatusY = 0;
+    }
+
+    //reset marker
+    markerPosX = markerPosXDefault;
+    markerPosY = markerPosYDefault;
+
 }
