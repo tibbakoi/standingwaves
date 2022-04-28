@@ -31,6 +31,7 @@ let oscX = new p5.Oscillator('sine');
 let oscY = new p5.Oscillator('sine');
 let ampAnalyser;
 let playButtonX, harmonicSelectRadioX, playButtonY, harmonicSelectRadioY, resetButton;
+let ampX, ampY;
 
 //default values
 let oscStatusX = 0;
@@ -106,14 +107,17 @@ function draw() {
             // reset permitted movements for next key press
             markerPermitMovement = [1, 1, 1, 1];
         }
+
     }
 
     //draw marker location
     drawMarker(markerPosX, markerPosY, markerSize);
 
-    //change amplitude accordingly based on markerPosX and markerPosY, ramping over 0.05seconds
-    oscX.amp(cos(radians(markerPosX / canvasSizeX * currentHarmonicX / 2 * 360)), 0.05);
-    oscY.amp(cos(radians(markerPosY / canvasSizeY * currentHarmonicY / 2 * 360)), 0.05);
+    // calculate new amplitude based on position
+    ampX = cos(radians(markerPosX / canvasSizeX * currentHarmonicX / 2 * 360));
+    ampY = cos(radians(markerPosY / canvasSizeY * currentHarmonicY / 2 * 360));
+    oscX.amp(ampX, 0.05);
+    oscY.amp(ampY, 0.05);
 
     if (frameCount % 2 == true){
         document.getElementById("soundLevel").innerHTML = str(round(ampAnalyser.getLevel(),2));
@@ -142,7 +146,7 @@ function playPauseAudioX() {
         oscX.start();
         oscStatusX = 1;
     } else if (oscStatusX === 1) {
-        oscX.stop();
+        oscX.stop(0.5);
         oscStatusX = 0;
     }
 }
@@ -153,6 +157,7 @@ function playPauseAudioY() {
         oscY.start();
         oscStatusY = 1;
     } else if (oscStatusY === 1) {
+        oscY.amp(0,1)
         oscY.stop();
         oscStatusY = 0;
     }
