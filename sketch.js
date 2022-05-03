@@ -33,6 +33,11 @@ let ampAnalyser;
 let playButtonX, harmonicSelectRadioX, playButtonY, harmonicSelectRadioY, resetButton;
 let ampX, ampY;
 
+// image variables for visualisation
+let visStatus = 0;
+let currentVisualisation = 0;
+let visXharm1, visXharm2, visXharm3;
+
 //default values
 let oscStatusX = 0;
 let currentHarmonicX = 1;
@@ -70,13 +75,25 @@ function setup() {
     document.getElementById("lowestMode").innerHTML = str(min(lowestFreqX, lowestFreqY));
 
     ampAnalyser = new p5.Amplitude();
+
+    computeVisualisations();
 }
 
 function draw() {
     //persisting elements
-    background(255);
     noFill();
     stroke(0);
+    //draw background visualisation based on current settings
+    if (currentVisualisation == 0) { //  no Vis
+        background(255);
+    } else if (currentVisualisation == 1) { // x direction only, harmonic 1
+        image(visXharm1, 0, 0);
+    } else if (currentVisualisation == 2) { // x direction only, harmonic 2
+        image(visXharm2, 0, 0);
+    } else if (currentVisualisation == 3) { // x direction only, harmonic 3
+        image(visXharm3, 0, 0);
+    }
+
     //draw walls
     rect(0, 0, canvasSizeX, canvasSizeY);
     //draw door - standard door width ~ 75cm - therefore needs diameter of 150
@@ -175,6 +192,11 @@ function selectHarmonicX() {
 
     setFreqLabel("X", currentHarmonicX * harmonicMultiplier);
     setOscFreq("X", currentHarmonicX * harmonicMultiplier);
+
+    if (visStatus) {
+        currentVisualisation = currentHarmonicX;
+    }
+
 }
 
 //Change current harmonic for Y-direction
@@ -255,6 +277,7 @@ function resetAll() {
 
 }
 
+// multiply harmonics by 3 (i.e. make room 3x smaller) for audibility
 function multiplyHarmonics() {
     if (harmonicMultiplier == 1) {
         harmonicMultiplier = 3;
@@ -267,4 +290,69 @@ function multiplyHarmonics() {
 
     setFreqLabel("Y", currentHarmonicY * harmonicMultiplier);
     setOscFreq("Y", currentHarmonicY * harmonicMultiplier);
+}
+
+//calculate visualisation for harmonic 1, x direction
+function computeVisualisations() {
+    // // calculate colour values for 1st harmonic, x direction
+    // for (var j = 0; j <= canvasSizeY; j++) {
+    //     colValue[j] = [];
+    //     for (var i = 0; i <= canvasSizeX; i++) {
+    //         colValue[j][i] = cos(radians(i / canvasSizeX * currentHarmonicX / 2 * 360));
+    //     }
+    // }
+
+    //create image for x harm 1
+    visXharm1 = createImage(canvasSizeX, canvasSizeY);
+    visXharm1.loadPixels();
+    let x, y;
+    // fill with color
+    for (y = 0; y < visXharm1.height; y++) {
+        for (x = 0; x < visXharm1.width; x++) {
+            writeColor(visXharm1, x, y, 255, 0, 0, 255);
+        }
+    }
+    visXharm1.updatePixels();
+
+    //create image for x harm 2
+    visXharm2 = createImage(canvasSizeX, canvasSizeY);
+    visXharm2.loadPixels();
+    // fill with color
+    for (y = 0; y < visXharm2.height; y++) {
+        for (x = 0; x < visXharm2.width; x++) {
+            writeColor(visXharm2, x, y, 0, 255, 0, 255);
+        }
+    }
+    visXharm2.updatePixels();
+
+    //create image for x harm 3
+    visXharm3 = createImage(canvasSizeX, canvasSizeY);
+    visXharm3.loadPixels();
+    // fill with color
+    for (y = 0; y < visXharm3.height; y++) {
+        for (x = 0; x < visXharm3.width; x++) {
+            writeColor(visXharm3, x, y, 0, 0, 255, 255);
+        }
+    }
+    visXharm3.updatePixels();
+
+}
+
+// helper function for writing colour value to array
+function writeColor(image, x, y, red, green, blue, alpha) {
+    let index = (x + y * width) * 4;
+    image.pixels[index] = red;
+    image.pixels[index + 1] = green;
+    image.pixels[index + 2] = blue;
+    image.pixels[index + 3] = alpha;
+}
+
+function setVisualisation() {
+    if (visStatus == 0) {
+        currentVisualisation = currentHarmonicX;
+        visStatus = 1;
+    } else if (visStatus == 1) {
+        currentVisualisation = 0;
+        visStatus = 0;
+    }
 }
