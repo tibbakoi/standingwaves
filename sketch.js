@@ -272,7 +272,11 @@ function resetAll() {
     //reset multiply
     if (harmonicMultiplier == 3) {
         document.getElementById("toggleHarmonicMultiplier").click();
+    }
 
+    //reset visualisation
+    if (visStatus == 1) {
+        document.getElementById("toggleVisualisation").click();
     }
 
 }
