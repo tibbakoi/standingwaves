@@ -23,32 +23,37 @@
     </header>
     <div>
         <p>Use the WASD keys to walk around this top-down view of a room. Use the mouse to move somewhere else within the room.</p>
-        <p>This room size (<span id="xSize">X</span>m by <span id="ySize">Y</span>m) has a lowest standing wave of <span id="lowestMode">X</span>Hz.</p>
+        <p>This room size (<span id="xSize">X</span>m by <span id="ySize">Y</span>m) has a lowest standing wave of <span id="lowestMode">X</span>Hz. If you can't hear the frequencies, try the multiply button to make the room smaller.</p>
 
         <p><strong><i class="fa-solid fa-arrow-right-arrow-left"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Oscillator: <span id="xDirection">Freq x</strong>
-        <label class="switch">
+            <label class="switch">
             <input id="toggleAudioX" type="checkbox" onclick="playPauseAudioX()">
             <span class="slider round"></span>
         </label>
-        <label><input type="radio" name="harmonicSelectRadioX" id="harmonicX_1" value="1" onchange="selectHarmonicX()" checked>1st harmonic</label>
-        <label><input type="radio" name="harmonicSelectRadioX" value="2" onchange="selectHarmonicX()">2nd harmonic</label>
-        <label><input type="radio" name="harmonicSelectRadioX" value="3" onchange="selectHarmonicX()">3rd harmonic</label>
+            <label><input type="radio" name="harmonicSelectRadioX" id="harmonicX_1" value="1" onchange="selectHarmonicX()" checked>1st harmonic</label>
+            <label><input type="radio" name="harmonicSelectRadioX" value="2" onchange="selectHarmonicX()">2nd harmonic</label>
+            <label><input type="radio" name="harmonicSelectRadioX" value="3" onchange="selectHarmonicX()">3rd harmonic</label>
         </p>
-    
+
         <p><strong><i class="fa-solid fa-arrow-up"></i><i class="fa-solid fa-arrow-down"></i>&nbsp;&nbsp;&nbsp;&nbsp;Oscillator: <span id="yDirection">Freq y</span></strong>
-        <label class="switch">
+            <label class="switch">
             <input id="toggleAudioY" type="checkbox" onclick="playPauseAudioY()">
             <span class="slider round"></span>
         </label>
-        <label><input type="radio" name="harmonicSelectRadioY" id="harmonicY_1" value="1" onchange="selectHarmonicY()" checked>1st harmonic</label>
-        <label><input type="radio" name="harmonicSelectRadioY" value="2" onchange="selectHarmonicY()">2nd harmonic</label>
-        <label><input type="radio" name="harmonicSelectRadioY" value="3" onchange="selectHarmonicY()">3rd harmonic</label>
+            <label><input type="radio" name="harmonicSelectRadioY" id="harmonicY_1" value="1" onchange="selectHarmonicY()" checked>1st harmonic</label>
+            <label><input type="radio" name="harmonicSelectRadioY" value="2" onchange="selectHarmonicY()">2nd harmonic</label>
+            <label><input type="radio" name="harmonicSelectRadioY" value="3" onchange="selectHarmonicY()">3rd harmonic</label>
         </p>
-        <button type="button" onclick="resetAll()">Reset</button>
+        <button type="button" onclick="resetAll()">Reset</button><br>
+        <span>Multiply harmonics by 3 (make room 3x smaller): </span>
+        <label class="switch">
+            <input id="toggleHarmonicMultiplier" type="checkbox" onclick="multiplyHarmonics()">
+            <span class="slider round"></span>
+        </label>
         <p>Sound level: <span id="soundLevel">x</span></p>
     </div>
     <div id="demo">
-       <noscript><p>Please use a modern browser with JavaScript enabled to see the demo.</p></noscript>
+        <noscript><p>Please use a modern browser with JavaScript enabled to see the demo.</p></noscript>
     </div>
     <div id="nodemodisplay">
         <p>This content requires a wider browser window.</p>

@@ -23,8 +23,8 @@ let markerPermitMovement = [1, 1, 1, 1]; //Left right up down
 // starting position
 let markerPosXDefault = 50;
 let markerPosYDefault = 25;
-let markerPosX=markerPosXDefault;
-let markerPosY=markerPosYDefault;
+let markerPosX = markerPosXDefault;
+let markerPosY = markerPosYDefault;
 
 // audio variables
 let oscX = new p5.Oscillator('sine');
@@ -42,6 +42,8 @@ let oscStatusY = 0;
 let currentHarmonicY = 1;
 let lowestFreqY;
 
+let harmonicMultiplier = 1;
+
 function setup() {
 
     let canvas = createCanvas(canvasSizeX, canvasSizeY);
@@ -49,23 +51,23 @@ function setup() {
     frameRate(60);
 
     //calculate lowest room modes in X and Y directions based on room size
-    lowestFreqX = round(calculateLowestRoomModeFreq(roomSizeX),2);
-    lowestFreqY = round(calculateLowestRoomModeFreq(roomSizeY),2);
+    lowestFreqX = round(calculateLowestRoomModeFreq(roomSizeX), 2);
+    lowestFreqY = round(calculateLowestRoomModeFreq(roomSizeY), 2);
 
     //relating to X-direction generation
     oscX.amp(0);
     setOscFreq("X", currentHarmonicX);
-    setFreqLabel("X",currentHarmonicX);
+    setFreqLabel("X", currentHarmonicX);
 
     //relating to Y-direction generation
     oscY.amp(0);
-    setOscFreq("Y",currentHarmonicY);
-    setFreqLabel("Y",currentHarmonicY);
+    setOscFreq("Y", currentHarmonicY);
+    setFreqLabel("Y", currentHarmonicY);
 
     document.getElementById("xSize").innerHTML = str(roomSizeX);
     document.getElementById("ySize").innerHTML = str(roomSizeY);
 
-    document.getElementById("lowestMode").innerHTML = str(min(lowestFreqX,lowestFreqY));
+    document.getElementById("lowestMode").innerHTML = str(min(lowestFreqX, lowestFreqY));
 
     ampAnalyser = new p5.Amplitude();
 }
@@ -78,7 +80,7 @@ function draw() {
     //draw walls
     rect(0, 0, canvasSizeX, canvasSizeY);
     //draw door - standard door width ~ 75cm - therefore needs diameter of 150
-    arc(5, 0, 150, 150, 0, PI*0.3, PIE);
+    arc(5, 0, 150, 150, 0, PI * 0.3, PIE);
     //10px cross for centre
     line(canvasSizeX / 2 + 5, canvasSizeY / 2, canvasSizeX / 2 - 5, canvasSizeY / 2);
     line(canvasSizeX / 2, canvasSizeY / 2 - 5, canvasSizeX / 2, canvasSizeY / 2 + 5);
@@ -119,15 +121,15 @@ function draw() {
     oscX.amp(ampX, 0.05);
     oscY.amp(ampY, 0.05);
 
-    if (frameCount % 2 == true){
-        document.getElementById("soundLevel").innerHTML = str(round(ampAnalyser.getLevel(),2));
+    if (frameCount % 2 == true) {
+        document.getElementById("soundLevel").innerHTML = str(round(ampAnalyser.getLevel(), 2));
     }
 
 }
 
 //Draw marker at given position and size
 function drawMarker(xPos, yPos, size) {
-    fill(4,170,109);
+    fill(4, 170, 109);
     noStroke();
     ellipse(xPos, yPos, size, size);
 }
@@ -146,7 +148,7 @@ function playPauseAudioX() {
         oscX.start();
         oscStatusX = 1;
     } else if (oscStatusX === 1) {
-        oscX.stop(0.5);
+        oscX.stop();
         oscStatusX = 0;
     }
 }
@@ -157,7 +159,6 @@ function playPauseAudioY() {
         oscY.start();
         oscStatusY = 1;
     } else if (oscStatusY === 1) {
-        oscY.amp(0,1)
         oscY.stop();
         oscStatusY = 0;
     }
@@ -167,85 +168,103 @@ function playPauseAudioY() {
 function selectHarmonicX() {
     var harmonicsX = document.getElementsByName("harmonicSelectRadioX");
 
-    for(var i = 0; i < harmonicsX.length; i++) {
-        if(harmonicsX[i].checked)
-        currentHarmonicX = harmonicsX[i].value;
+    for (var i = 0; i < harmonicsX.length; i++) {
+        if (harmonicsX[i].checked)
+            currentHarmonicX = harmonicsX[i].value;
     }
 
-    setFreqLabel("X",currentHarmonicX);
-    setOscFreq("X",currentHarmonicX);
+    setFreqLabel("X", currentHarmonicX * harmonicMultiplier);
+    setOscFreq("X", currentHarmonicX * harmonicMultiplier);
 }
 
 //Change current harmonic for Y-direction
 function selectHarmonicY() {
     var harmonicsY = document.getElementsByName("harmonicSelectRadioY");
 
-    for(var i = 0; i < harmonicsY.length; i++) {
-        if(harmonicsY[i].checked)
-        currentHarmonicY = harmonicsY[i].value;
+    for (var i = 0; i < harmonicsY.length; i++) {
+        if (harmonicsY[i].checked)
+            currentHarmonicY = harmonicsY[i].value;
     }
 
-    setFreqLabel("Y",currentHarmonicY);
-    setOscFreq("Y",currentHarmonicY);
+    setFreqLabel("Y", currentHarmonicY * harmonicMultiplier);
+    setOscFreq("Y", currentHarmonicY * harmonicMultiplier);
 }
 
 function setOscFreq(oscIndicator, harmonic) {
-    switch(oscIndicator){
+    switch (oscIndicator) {
         case "X":
-        oscX.freq(lowestFreqX * harmonic);
-        break;
-        case"Y":
-        oscY.freq(lowestFreqY * harmonic);
-        break;
+            oscX.freq(lowestFreqX * harmonic);
+            break;
+        case "Y":
+            oscY.freq(lowestFreqY * harmonic);
+            break;
     }
 }
 
 function setFreqLabel(labelIndicator, harmonic) {
-    switch(labelIndicator){
+    switch (labelIndicator) {
         case "X":
-        document.getElementById("xDirection").innerHTML = str(round(lowestFreqX * harmonic,2)) + "Hz";
-        break;
+            document.getElementById("xDirection").innerHTML = str(round(lowestFreqX * harmonic, 2)) + "Hz";
+            break;
         case "Y":
-        document.getElementById("yDirection").innerHTML = str(round(lowestFreqY * harmonic,2)) + "Hz";
-        break;
+            document.getElementById("yDirection").innerHTML = str(round(lowestFreqY * harmonic, 2)) + "Hz";
+            break;
     }
 }
 
- function calculateLowestRoomModeFreq(dimension){
+function calculateLowestRoomModeFreq(dimension) {
     var c = 343;
     var mode = 1;
-    var freq = c / ((2 * dimension)/mode);
+    var freq = c / ((2 * dimension) / mode);
 
     return freq;
 
- }
+}
 
-function resetAll(){
+function resetAll() {
 
     //reset X
     currentHarmonicX = 1;
     setFreqLabel("X", currentHarmonicX);
-    setOscFreq("X",currentHarmonicX);
-    document.getElementById("harmonicX_1").checked=true;
+    setOscFreq("X", currentHarmonicX);
+    document.getElementById("harmonicX_1").checked = true;
 
-    if (oscStatusX==1){
+    if (oscStatusX == 1) {
         document.getElementById("toggleAudioX").click();
-        oscStatusX = 0;
     }
 
     //reset Y
     currentHarmonicY = 1;
     setFreqLabel("Y", currentHarmonicY);
-    setOscFreq("Y",currentHarmonicY);
-    document.getElementById("harmonicY_1").checked=true;
+    setOscFreq("Y", currentHarmonicY);
+    document.getElementById("harmonicY_1").checked = true;
 
-    if (oscStatusY==1){
+    if (oscStatusY == 1) {
         document.getElementById("toggleAudioY").click();
-        oscStatusY = 0;
     }
 
     //reset marker
     markerPosX = markerPosXDefault;
     markerPosY = markerPosYDefault;
 
+    //reset multiply
+    if (harmonicMultiplier == 3) {
+        document.getElementById("toggleHarmonicMultiplier").click();
+
+    }
+
+}
+
+function multiplyHarmonics() {
+    if (harmonicMultiplier == 1) {
+        harmonicMultiplier = 3;
+    } else {
+        harmonicMultiplier = 1;
+    }
+
+    setFreqLabel("X", currentHarmonicX * harmonicMultiplier);
+    setOscFreq("X", currentHarmonicX * harmonicMultiplier);
+
+    setFreqLabel("Y", currentHarmonicY * harmonicMultiplier);
+    setOscFreq("Y", currentHarmonicY * harmonicMultiplier);
 }
