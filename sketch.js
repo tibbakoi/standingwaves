@@ -36,6 +36,7 @@ let ampX, ampY;
 // image variables for visualisation
 let visStatus = 0;
 let currentVisualisation = 0;
+let colValueX = [];
 let visXharm1, visXharm2, visXharm3;
 
 //default values
@@ -298,22 +299,24 @@ function multiplyHarmonics() {
 
 //calculate visualisation for harmonic 1, x direction
 function computeVisualisations() {
-    // // calculate colour values for 1st harmonic, x direction
-    // for (var j = 0; j <= canvasSizeY; j++) {
-    //     colValue[j] = [];
-    //     for (var i = 0; i <= canvasSizeX; i++) {
-    //         colValue[j][i] = cos(radians(i / canvasSizeX * currentHarmonicX / 2 * 360));
-    //     }
-    // }
+
+    //calculate colour values for harmonic 1-3, x direction
+    for (var j = 0; j < 3; j++) {
+        colValueX[j] = [];
+        for (var i = 0; i <= canvasSizeX; i++) {
+            colValueX[j][i] = abs(cos(radians(i / canvasSizeX * (j + 1) / 2 * 360)));
+        }
+    }
 
     //create image for x harm 1
     visXharm1 = createImage(canvasSizeX, canvasSizeY);
     visXharm1.loadPixels();
-    let x, y;
+    let x, y, currentValue;
     // fill with color
     for (y = 0; y < visXharm1.height; y++) {
         for (x = 0; x < visXharm1.width; x++) {
-            writeColor(visXharm1, x, y, 255, 0, 0, 255);
+            currentValue = round(colValueX[0][x] * 255);
+            writeColor(visXharm1, x, y, currentValue, currentValue, currentValue, 255);
         }
     }
     visXharm1.updatePixels();
@@ -324,7 +327,8 @@ function computeVisualisations() {
     // fill with color
     for (y = 0; y < visXharm2.height; y++) {
         for (x = 0; x < visXharm2.width; x++) {
-            writeColor(visXharm2, x, y, 0, 255, 0, 255);
+            currentValue = round(colValueX[1][x] * 255);
+            writeColor(visXharm2, x, y, currentValue, currentValue, currentValue, 255);
         }
     }
     visXharm2.updatePixels();
@@ -335,7 +339,8 @@ function computeVisualisations() {
     // fill with color
     for (y = 0; y < visXharm3.height; y++) {
         for (x = 0; x < visXharm3.width; x++) {
-            writeColor(visXharm3, x, y, 0, 0, 255, 255);
+            currentValue = round(colValueX[2][x] * 255);
+            writeColor(visXharm3, x, y, currentValue, currentValue, currentValue, 255);
         }
     }
     visXharm3.updatePixels();
