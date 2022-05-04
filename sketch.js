@@ -51,6 +51,9 @@ let lowestFreqY;
 
 let harmonicMultiplier = 1;
 
+let startingColorX = [236,0,255];//purple
+let startingColorY = [255,251,0];//yellow
+
 function setup() {
 
     let canvas = createCanvas(canvasSizeX, canvasSizeY);
@@ -82,7 +85,6 @@ function setup() {
 
     computeVisualisations();
 }
-
 
 
 function draw() {
@@ -150,7 +152,6 @@ function draw() {
             // reset permitted movements for next key press
             markerPermitMovement = [1, 1, 1, 1];
         }
-
     }
 
     //draw marker location
@@ -165,7 +166,6 @@ function draw() {
     if (frameCount % 2 == true) {
         document.getElementById("soundLevel").innerHTML = str(round(ampAnalyser.getLevel(), 2));
     }
-
 }
 
 //Draw marker at given position and size
@@ -225,7 +225,9 @@ function selectHarmonicX() {
     for (var i = 0; i < harmonicsX.length; i++) {
         if (harmonicsX[i].checked)
             currentHarmonicX = harmonicsX[i].value;
+        if (oscStatusX) { //set current visualistion only if oscX is on i.e. cannot change vis for other osc
             currentVisualisation = currentHarmonicX; //use 1-3
+        }
     }
 
     setFreqLabel("X", currentHarmonicX * harmonicMultiplier);
@@ -240,7 +242,9 @@ function selectHarmonicY() {
     for (var i = 0; i < harmonicsY.length; i++) {
         if (harmonicsY[i].checked)
             currentHarmonicY = harmonicsY[i].value;
-            currentVisualisation = str(int(currentHarmonicY)+3); //use 4-6
+        if (oscStatusY) { //set current visualisation only if oscY is on i.e. cannot change vis for other osc
+            currentVisualisation = str(int(currentHarmonicY) + 3); //use 4-6
+        }
     }
 
     setFreqLabel("Y", currentHarmonicY * harmonicMultiplier);
@@ -332,7 +336,7 @@ function multiplyHarmonics() {
     setOscFreq("Y", currentHarmonicY * harmonicMultiplier);
 }
 
-//calculate visualisation for harmonic 1, x direction
+//calculate 6 visualisations for harmonic 1-3, x and y directions
 function computeVisualisations() {
 
     //calculate colour values for harmonic 1-3, x direction. creates [3x681]
@@ -358,8 +362,8 @@ function computeVisualisations() {
     // fill with color
     for (y = 0; y < visXharm1.height; y++) {
         for (x = 0; x < visXharm1.width; x++) {
-            currentValue = round(colValueX[0][x] * 255);
-            writeColor(visXharm1, x, y, currentValue, currentValue, currentValue, 255);
+            currentValue = colValueX[0][x];
+            writeColor(visXharm1, x, y, round(currentValue*startingColorX[0]), round(currentValue*startingColorX[1]), round(currentValue*startingColorX[2]), 255);
         }
     }
     visXharm1.updatePixels();
@@ -370,8 +374,8 @@ function computeVisualisations() {
     // fill with color
     for (y = 0; y < visXharm2.height; y++) {
         for (x = 0; x < visXharm2.width; x++) {
-            currentValue = round(colValueX[1][x] * 255);
-            writeColor(visXharm2, x, y, currentValue, currentValue, currentValue, 255);
+            currentValue = colValueX[1][x];
+            writeColor(visXharm2, x, y, round(currentValue*startingColorX[0]), round(currentValue*startingColorX[1]), round(currentValue*startingColorX[2]), 255);
         }
     }
     visXharm2.updatePixels();
@@ -382,8 +386,8 @@ function computeVisualisations() {
     // fill with color
     for (y = 0; y < visXharm3.height; y++) {
         for (x = 0; x < visXharm3.width; x++) {
-            currentValue = round(colValueX[2][x] * 255);
-            writeColor(visXharm3, x, y, currentValue, currentValue, currentValue, 255);
+            currentValue = colValueX[2][x];
+            writeColor(visXharm3, x, y, round(currentValue*startingColorX[0]), round(currentValue*startingColorX[1]), round(currentValue*startingColorX[2]), 255);
         }
     }
     visXharm3.updatePixels();
@@ -394,8 +398,8 @@ function computeVisualisations() {
     // fill with color
     for (y = 0; y < visYharm1.height; y++) {
         for (x = 0; x < visYharm1.width; x++) {
-            currentValue = round(colValueY[0][y] * 255);
-            writeColor(visYharm1, x, y, currentValue, currentValue, currentValue, 255);
+            currentValue = colValueY[0][y];
+            writeColor(visYharm1, x, y, round(currentValue*startingColorY[0]), round(currentValue*startingColorY[1]), round(currentValue*startingColorY[2]), 255);
         }
     }
     visYharm1.updatePixels();
@@ -406,8 +410,8 @@ function computeVisualisations() {
     // fill with color
     for (y = 0; y < visYharm2.height; y++) {
         for (x = 0; x < visYharm2.width; x++) {
-            currentValue = round(colValueY[1][y] * 255);
-            writeColor(visYharm2, x, y, currentValue, currentValue, currentValue, 255);
+            currentValue = colValueY[1][y];
+            writeColor(visYharm2, x, y, round(currentValue*startingColorY[0]), round(currentValue*startingColorY[1]), round(currentValue*startingColorY[2]), 255);
         }
     }
     visYharm2.updatePixels();
@@ -418,8 +422,8 @@ function computeVisualisations() {
     // fill with color
     for (y = 0; y < visYharm3.height; y++) {
         for (x = 0; x < visYharm3.width; x++) {
-            currentValue = round(colValueY[2][y] * 255);
-            writeColor(visYharm3, x, y, currentValue, currentValue, currentValue, 255);
+            currentValue = colValueY[2][y];
+            writeColor(visYharm3, x, y, round(currentValue*startingColorY[0]), round(currentValue*startingColorY[1]), round(currentValue*startingColorY[2]), 255);
         }
     }
     visYharm3.updatePixels();
