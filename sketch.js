@@ -106,6 +106,15 @@ function draw() {
                 case "3":
                     image(visXharm3, 0, 0);
                     break;
+                case "4":
+                    image(visYharm1, 0, 0);
+                    break;
+                case "5":
+                    image(visYharm2, 0, 0);
+                    break;
+                case "6":
+                    image(visYharm3, 0, 0);
+                    break;
             }
     }
 
@@ -180,6 +189,7 @@ function playPauseAudioX() {
         oscX.start();
         oscStatusX = 1;
         enableVisualisationToggle();
+        selectHarmonicX(); //trigger reselection of currentHarmonic and currentVisualisation
     } else if (oscStatusX === 1) {
         oscX.stop();
         oscStatusX = 0;
@@ -197,9 +207,13 @@ function playPauseAudioY() {
         oscY.start();
         oscStatusY = 1;
         enableVisualisationToggle();
+        selectHarmonicY(); //trigger reselection of currentHarmonic and currentVisualisation
     } else if (oscStatusY === 1) {
         oscY.stop();
         oscStatusY = 0;
+        if (visStatus) { //is vis is currently on, turn it off too
+            document.getElementById("toggleVisualisation").click();
+        }
         disableVisualisationToggle();
     }
 }
@@ -211,16 +225,11 @@ function selectHarmonicX() {
     for (var i = 0; i < harmonicsX.length; i++) {
         if (harmonicsX[i].checked)
             currentHarmonicX = harmonicsX[i].value;
+            currentVisualisation = currentHarmonicX; //use 1-3
     }
 
     setFreqLabel("X", currentHarmonicX * harmonicMultiplier);
     setOscFreq("X", currentHarmonicX * harmonicMultiplier);
-
-    if (visStatus) {
-        currentVisualisation = currentHarmonicX;
-    }
-
-    setCurrentVisualisation();
 
 }
 
@@ -231,6 +240,7 @@ function selectHarmonicY() {
     for (var i = 0; i < harmonicsY.length; i++) {
         if (harmonicsY[i].checked)
             currentHarmonicY = harmonicsY[i].value;
+            currentVisualisation = str(int(currentHarmonicY)+3); //use 4-6
     }
 
     setFreqLabel("Y", currentHarmonicY * harmonicMultiplier);
@@ -426,7 +436,11 @@ function writeColor(image, x, y, red, green, blue, alpha) {
 }
 
 function setCurrentVisualisation() {
-    currentVisualisation = currentHarmonicX;
+    if (oscStatusX & !oscStatusY) {
+        currentVisualisation = currentHarmonicX; //if only oscX, use 1-3
+    } else if (!oscStatusX & oscStatusY) {
+        currentVisualisation = currentHarmonicY + 3; //if only oscY, use 4-6
+    }
 }
 
 function toggleVisualisation() {
