@@ -37,7 +37,8 @@ let ampX, ampY;
 let visStatus = 0;
 let currentVisualisation = 0;
 let colValueX = [];
-let visXharm1, visXharm2, visXharm3;
+let colValueY = [];
+let visXharm1, visXharm2, visXharm3, visYharm1, visYharm2, visYharm3;
 
 //default values
 let oscStatusX = 0;
@@ -77,22 +78,35 @@ function setup() {
 
     ampAnalyser = new p5.Amplitude();
 
+    disableVisualisationToggle();
+
     computeVisualisations();
 }
+
+
 
 function draw() {
     //persisting elements
     noFill();
     stroke(0);
+
     //draw background visualisation based on current settings
-    if (currentVisualisation == 0) { //  no Vis
-        background(255);
-    } else if (currentVisualisation == 1) { // x direction only, harmonic 1
-        image(visXharm1, 0, 0);
-    } else if (currentVisualisation == 2) { // x direction only, harmonic 2
-        image(visXharm2, 0, 0);
-    } else if (currentVisualisation == 3) { // x direction only, harmonic 3
-        image(visXharm3, 0, 0);
+    switch (visStatus) {
+        case 0:
+            background(255);
+            break;
+        case 1:
+            switch (currentVisualisation) {
+                case "1":
+                    image(visXharm1, 0, 0);
+                    break;
+                case "2":
+                    image(visXharm2, 0, 0);
+                    break;
+                case "3":
+                    image(visXharm3, 0, 0);
+                    break;
+            }
     }
 
     //draw walls
@@ -165,9 +179,15 @@ function playPauseAudioX() {
     if (oscStatusX === 0) {
         oscX.start();
         oscStatusX = 1;
+        enableVisualisationToggle();
     } else if (oscStatusX === 1) {
         oscX.stop();
         oscStatusX = 0;
+        if (visStatus) { //is vis is currently on, turn it off too
+            document.getElementById("toggleVisualisation").click();
+        }
+        disableVisualisationToggle();
+
     }
 }
 
@@ -176,9 +196,11 @@ function playPauseAudioY() {
     if (oscStatusY === 0) {
         oscY.start();
         oscStatusY = 1;
+        enableVisualisationToggle();
     } else if (oscStatusY === 1) {
         oscY.stop();
         oscStatusY = 0;
+        disableVisualisationToggle();
     }
 }
 
@@ -198,6 +220,8 @@ function selectHarmonicX() {
         currentVisualisation = currentHarmonicX;
     }
 
+    setCurrentVisualisation();
+
 }
 
 //Change current harmonic for Y-direction
@@ -211,6 +235,7 @@ function selectHarmonicY() {
 
     setFreqLabel("Y", currentHarmonicY * harmonicMultiplier);
     setOscFreq("Y", currentHarmonicY * harmonicMultiplier);
+
 }
 
 function setOscFreq(oscIndicator, harmonic) {
@@ -270,12 +295,12 @@ function resetAll() {
     markerPosX = markerPosXDefault;
     markerPosY = markerPosYDefault;
 
-    //reset multiply
+    //reset multiply if relevant
     if (harmonicMultiplier == 3) {
         document.getElementById("toggleHarmonicMultiplier").click();
     }
 
-    //reset visualisation
+    //reset visualisation if relevant
     if (visStatus == 1) {
         document.getElementById("toggleVisualisation").click();
     }
@@ -300,11 +325,19 @@ function multiplyHarmonics() {
 //calculate visualisation for harmonic 1, x direction
 function computeVisualisations() {
 
-    //calculate colour values for harmonic 1-3, x direction
+    //calculate colour values for harmonic 1-3, x direction. creates [3x681]
     for (var j = 0; j < 3; j++) {
         colValueX[j] = [];
         for (var i = 0; i <= canvasSizeX; i++) {
             colValueX[j][i] = abs(cos(radians(i / canvasSizeX * (j + 1) / 2 * 360)));
+        }
+    }
+
+    //calculate colour values for harmonic 1-3, y direction. creates [3x381]
+    for (var j = 0; j < 3; j++) {
+        colValueY[j] = [];
+        for (var i = 0; i <= canvasSizeY; i++) {
+            colValueY[j][i] = abs(cos(radians(i / canvasSizeY * (j + 1) / 2 * 360)));
         }
     }
 
@@ -345,6 +378,42 @@ function computeVisualisations() {
     }
     visXharm3.updatePixels();
 
+    //create image for Y harm 1
+    visYharm1 = createImage(canvasSizeX, canvasSizeY);
+    visYharm1.loadPixels();
+    // fill with color
+    for (y = 0; y < visYharm1.height; y++) {
+        for (x = 0; x < visYharm1.width; x++) {
+            currentValue = round(colValueY[0][y] * 255);
+            writeColor(visYharm1, x, y, currentValue, currentValue, currentValue, 255);
+        }
+    }
+    visYharm1.updatePixels();
+
+    //create image for Y harm 2
+    visYharm2 = createImage(canvasSizeX, canvasSizeY);
+    visYharm2.loadPixels();
+    // fill with color
+    for (y = 0; y < visYharm2.height; y++) {
+        for (x = 0; x < visYharm2.width; x++) {
+            currentValue = round(colValueY[1][y] * 255);
+            writeColor(visYharm2, x, y, currentValue, currentValue, currentValue, 255);
+        }
+    }
+    visYharm2.updatePixels();
+
+    //create image for Y harm 3
+    visYharm3 = createImage(canvasSizeX, canvasSizeY);
+    visYharm3.loadPixels();
+    // fill with color
+    for (y = 0; y < visYharm3.height; y++) {
+        for (x = 0; x < visYharm3.width; x++) {
+            currentValue = round(colValueY[2][y] * 255);
+            writeColor(visYharm3, x, y, currentValue, currentValue, currentValue, 255);
+        }
+    }
+    visYharm3.updatePixels();
+
 }
 
 // helper function for writing colour value to array
@@ -356,12 +425,22 @@ function writeColor(image, x, y, red, green, blue, alpha) {
     image.pixels[index + 3] = alpha;
 }
 
-function setVisualisation() {
-    if (visStatus == 0) {
-        currentVisualisation = currentHarmonicX;
+function setCurrentVisualisation() {
+    currentVisualisation = currentHarmonicX;
+}
+
+function toggleVisualisation() {
+    if (visStatus == 0) { //turn on visualisation
         visStatus = 1;
-    } else if (visStatus == 1) {
-        currentVisualisation = 0;
+    } else if (visStatus == 1) { //turn off visualisation
         visStatus = 0;
     }
+}
+
+function disableVisualisationToggle() {
+    document.getElementById("toggleVisualisation").disabled = true;
+}
+
+function enableVisualisationToggle() {
+    document.getElementById("toggleVisualisation").disabled = false;
 }
