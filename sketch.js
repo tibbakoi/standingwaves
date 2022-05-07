@@ -38,21 +38,18 @@ let visStatus = 0;
 let currentVisualisation = 0;
 let colValueX = [];
 let colValueY = [];
-let visXharm1, visXharm2, visXharm3, visYharm1, visYharm2, visYharm3;
+let visXharm1, visXharm2, visXharm3, visYharm1, visYharm2, visYharm3, visXY;
+let startingColorX = [236,0,255]; //purple
+let startingColorY = [255,251,0]; //yellow
 
 //default values
 let oscStatusX = 0;
 let currentHarmonicX = 1;
 let lowestFreqX;
-
 let oscStatusY = 0;
 let currentHarmonicY = 1;
 let lowestFreqY;
-
 let harmonicMultiplier = 1;
-
-let startingColorX = [236,0,255];//purple
-let startingColorY = [255,251,0];//yellow
 
 function setup() {
 

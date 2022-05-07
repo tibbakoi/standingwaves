@@ -78,6 +78,10 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
+input:disabled + .slider {
+  cursor: not-allowed;
+}
+
 .slider.round {
   border-radius: 34px;
 }
