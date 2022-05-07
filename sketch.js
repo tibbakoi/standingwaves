@@ -39,8 +39,8 @@ let currentVisualisation = 0;
 let colValueX = [];
 let colValueY = [];
 let visXharm1, visXharm2, visXharm3, visYharm1, visYharm2, visYharm3, visXY;
-let startingColorX = [236,0,255]; //purple
-let startingColorY = [255,251,0]; //yellow
+let startingColorX = [236, 0, 255]; //purple
+let startingColorY = [255, 251, 0]; //yellow
 
 //default values
 let oscStatusX = 0;
@@ -81,6 +81,7 @@ function setup() {
     disableVisualisationToggle();
 
     computeVisualisations();
+    visXY = createImage(canvasSizeX, canvasSizeY);
 }
 
 
@@ -113,6 +114,9 @@ function draw() {
                     break;
                 case "6":
                     image(visYharm3, 0, 0);
+                    break;
+                case "XY":
+                    image(visXY, 0, 0);
                     break;
             }
     }
@@ -182,19 +186,18 @@ function mousePressed() {
 
 //Button for audio playback for X-direction
 function playPauseAudioX() {
-    if (oscStatusX === 0) {
+    if (oscStatusX === 0) { // if oscX is off, turn on, enable vis, trigger selection of harmonic and vis
         oscX.start();
         oscStatusX = 1;
         enableVisualisationToggle();
-        selectHarmonicX(); //trigger reselection of currentHarmonic and currentVisualisation
-    } else if (oscStatusX === 1) {
+        selectHarmonicX(); 
+    } else if (oscStatusX === 1) { // if oscX is on, turn off, turn off vis unless other osc is on
         oscX.stop();
         oscStatusX = 0;
-        if (visStatus) { //is vis is currently on, turn it off too
+        if (visStatus & !oscStatusY) {
             document.getElementById("toggleVisualisation").click();
+            disableVisualisationToggle
         }
-        disableVisualisationToggle();
-
     }
 }
 
@@ -208,10 +211,10 @@ function playPauseAudioY() {
     } else if (oscStatusY === 1) {
         oscY.stop();
         oscStatusY = 0;
-        if (visStatus) { //is vis is currently on, turn it off too
+        if (visStatus & !oscStatusX) { //is vis is currently on, turn it off too
             document.getElementById("toggleVisualisation").click();
+            disableVisualisationToggle();
         }
-        disableVisualisationToggle();
     }
 }
 
@@ -220,16 +223,13 @@ function selectHarmonicX() {
     var harmonicsX = document.getElementsByName("harmonicSelectRadioX");
 
     for (var i = 0; i < harmonicsX.length; i++) {
-        if (harmonicsX[i].checked)
+        if (harmonicsX[i].checked) {
             currentHarmonicX = harmonicsX[i].value;
-        if (oscStatusX) { //set current visualistion only if oscX is on i.e. cannot change vis for other osc
-            currentVisualisation = currentHarmonicX; //use 1-3
+            setCurrentVisualisation();
         }
     }
-
     setFreqLabel("X", currentHarmonicX * harmonicMultiplier);
     setOscFreq("X", currentHarmonicX * harmonicMultiplier);
-
 }
 
 //Change current harmonic for Y-direction
@@ -237,16 +237,13 @@ function selectHarmonicY() {
     var harmonicsY = document.getElementsByName("harmonicSelectRadioY");
 
     for (var i = 0; i < harmonicsY.length; i++) {
-        if (harmonicsY[i].checked)
+        if (harmonicsY[i].checked) {
             currentHarmonicY = harmonicsY[i].value;
-        if (oscStatusY) { //set current visualisation only if oscY is on i.e. cannot change vis for other osc
-            currentVisualisation = str(int(currentHarmonicY) + 3); //use 4-6
+            setCurrentVisualisation();
         }
     }
-
     setFreqLabel("Y", currentHarmonicY * harmonicMultiplier);
     setOscFreq("Y", currentHarmonicY * harmonicMultiplier);
-
 }
 
 function setOscFreq(oscIndicator, harmonic) {
@@ -315,7 +312,6 @@ function resetAll() {
     if (visStatus == 1) {
         document.getElementById("toggleVisualisation").click();
     }
-
 }
 
 // multiply harmonics by 3 (i.e. make room 3x smaller) for audibility
@@ -328,7 +324,6 @@ function multiplyHarmonics() {
 
     setFreqLabel("X", currentHarmonicX * harmonicMultiplier);
     setOscFreq("X", currentHarmonicX * harmonicMultiplier);
-
     setFreqLabel("Y", currentHarmonicY * harmonicMultiplier);
     setOscFreq("Y", currentHarmonicY * harmonicMultiplier);
 }
@@ -360,7 +355,7 @@ function computeVisualisations() {
     for (y = 0; y < visXharm1.height; y++) {
         for (x = 0; x < visXharm1.width; x++) {
             currentValue = colValueX[0][x];
-            writeColor(visXharm1, x, y, round(currentValue*startingColorX[0]), round(currentValue*startingColorX[1]), round(currentValue*startingColorX[2]), 255);
+            writeColor(visXharm1, x, y, round(currentValue * startingColorX[0]), round(currentValue * startingColorX[1]), round(currentValue * startingColorX[2]), 255);
         }
     }
     visXharm1.updatePixels();
@@ -372,7 +367,7 @@ function computeVisualisations() {
     for (y = 0; y < visXharm2.height; y++) {
         for (x = 0; x < visXharm2.width; x++) {
             currentValue = colValueX[1][x];
-            writeColor(visXharm2, x, y, round(currentValue*startingColorX[0]), round(currentValue*startingColorX[1]), round(currentValue*startingColorX[2]), 255);
+            writeColor(visXharm2, x, y, round(currentValue * startingColorX[0]), round(currentValue * startingColorX[1]), round(currentValue * startingColorX[2]), 255);
         }
     }
     visXharm2.updatePixels();
@@ -384,7 +379,7 @@ function computeVisualisations() {
     for (y = 0; y < visXharm3.height; y++) {
         for (x = 0; x < visXharm3.width; x++) {
             currentValue = colValueX[2][x];
-            writeColor(visXharm3, x, y, round(currentValue*startingColorX[0]), round(currentValue*startingColorX[1]), round(currentValue*startingColorX[2]), 255);
+            writeColor(visXharm3, x, y, round(currentValue * startingColorX[0]), round(currentValue * startingColorX[1]), round(currentValue * startingColorX[2]), 255);
         }
     }
     visXharm3.updatePixels();
@@ -396,7 +391,7 @@ function computeVisualisations() {
     for (y = 0; y < visYharm1.height; y++) {
         for (x = 0; x < visYharm1.width; x++) {
             currentValue = colValueY[0][y];
-            writeColor(visYharm1, x, y, round(currentValue*startingColorY[0]), round(currentValue*startingColorY[1]), round(currentValue*startingColorY[2]), 255);
+            writeColor(visYharm1, x, y, round(currentValue * startingColorY[0]), round(currentValue * startingColorY[1]), round(currentValue * startingColorY[2]), 255);
         }
     }
     visYharm1.updatePixels();
@@ -408,7 +403,7 @@ function computeVisualisations() {
     for (y = 0; y < visYharm2.height; y++) {
         for (x = 0; x < visYharm2.width; x++) {
             currentValue = colValueY[1][y];
-            writeColor(visYharm2, x, y, round(currentValue*startingColorY[0]), round(currentValue*startingColorY[1]), round(currentValue*startingColorY[2]), 255);
+            writeColor(visYharm2, x, y, round(currentValue * startingColorY[0]), round(currentValue * startingColorY[1]), round(currentValue * startingColorY[2]), 255);
         }
     }
     visYharm2.updatePixels();
@@ -420,11 +415,10 @@ function computeVisualisations() {
     for (y = 0; y < visYharm3.height; y++) {
         for (x = 0; x < visYharm3.width; x++) {
             currentValue = colValueY[2][y];
-            writeColor(visYharm3, x, y, round(currentValue*startingColorY[0]), round(currentValue*startingColorY[1]), round(currentValue*startingColorY[2]), 255);
+            writeColor(visYharm3, x, y, round(currentValue * startingColorY[0]), round(currentValue * startingColorY[1]), round(currentValue * startingColorY[2]), 255);
         }
     }
     visYharm3.updatePixels();
-
 }
 
 // helper function for writing colour value to array
@@ -436,11 +430,48 @@ function writeColor(image, x, y, red, green, blue, alpha) {
     image.pixels[index + 3] = alpha;
 }
 
+function computeCurrentXYVisualisation() {
+    var xImage, yImage;
+
+    visXY = createImage(canvasSizeX, canvasSizeY); // requires creating new image each time to avoid infinite blending
+
+    // based on currentHarmonicX and currentHarmonicY, get the two images and BLEND THEM
+    switch (currentHarmonicX) {
+        case "1":
+            xImage = visXharm1;
+            break;
+        case "2":
+            xImage = visXharm2;
+            break;
+        case "3":
+            xImage = visXharm3;
+            break;
+    }
+
+    switch (currentHarmonicY) {
+        case "1":
+            yImage = visYharm1;
+            break;
+        case "2":
+            yImage = visYharm2;
+            break;
+        case "3":
+            yImage = visYharm3;
+            break;
+    }
+
+    visXY.blend(xImage, 0, 0, canvasSizeX, canvasSizeY, 0, 0, canvasSizeX, canvasSizeY, DIFFERENCE);
+    visXY.blend(yImage, 0, 0, canvasSizeX, canvasSizeY, 0, 0, canvasSizeX, canvasSizeY, DIFFERENCE);
+}
+
 function setCurrentVisualisation() {
     if (oscStatusX & !oscStatusY) {
         currentVisualisation = currentHarmonicX; //if only oscX, use 1-3
     } else if (!oscStatusX & oscStatusY) {
-        currentVisualisation = currentHarmonicY + 3; //if only oscY, use 4-6
+        currentVisualisation = str(int(currentHarmonicY) + 3); //if only oscY, use 4-6
+    } else if (oscStatusX & oscStatusY) { //if both, use "XY" and recompute
+        currentVisualisation = "XY";
+        computeCurrentXYVisualisation();
     }
 }
 
