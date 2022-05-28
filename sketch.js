@@ -29,7 +29,6 @@ let markerPosY = markerPosYDefault;
 // audio variables
 let oscX = new p5.Oscillator('sine');
 let oscY = new p5.Oscillator('sine');
-let ampAnalyser;
 let playButtonX, harmonicSelectRadioX, playButtonY, harmonicSelectRadioY, resetButton;
 let ampX, ampY;
 
@@ -77,8 +76,6 @@ function setup() {
     document.getElementById("xSize").innerHTML = str(roomSizeX);
     document.getElementById("ySize").innerHTML = str(roomSizeY);
     document.getElementById("lowestMode").innerHTML = str(min(lowestFreqX, lowestFreqY));
-
-    ampAnalyser = new p5.Amplitude();
 
     //compute the 6 base visualisations 
     computeVisualisations();
@@ -165,11 +162,6 @@ function draw() {
     ampY = cos(radians(markerPosY / canvasSizeY * currentHarmonicY / 2 * 360));
     oscX.amp(ampX, 0.05);
     oscY.amp(ampY, 0.05);
-
-    // print sound level at 30fps
-    if (frameCount % 2 == true) {
-        document.getElementById("soundLevel").innerHTML = str(round(ampAnalyser.getLevel(), 2));
-    }
 }
 
 //Draw marker at given position and size
@@ -454,5 +446,4 @@ function toggleVisualisation() {
     } else if (visStatus == 1) { //turn off visualisation
         visStatus = 0;
     }
-    //document.getElementById("toggleVisualisation").checked
 }
