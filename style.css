@@ -19,9 +19,16 @@ body {
 /* UI element formatting*/
 
 button{
+  border-color: #04AA6D;
+  background-color: white;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
   background-color: #04AA6D;
   color: white;
-  margin-bottom: 10px;
 }
 
 /* switch formatting from https://www.w3schools.com/howto/howto_css_switch.asp */
