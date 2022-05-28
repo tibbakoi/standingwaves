@@ -91,11 +91,14 @@ function draw() {
 
     //draw background visualisation based on current settings
     switch (visStatus) {
-        case 0: //no vis
+        case 0: //vis switch off
             background(255);
             break;
-        case 1: //yes vis
+        case 1: //vis switch on
             switch (currentVisualisation) {
+                case "0": //when switch is on but both osc are off
+                    background(255);
+                    break;
                 case "1":
                     image(visX[0], 0, 0);
                     break;
@@ -189,11 +192,11 @@ function playPauseAudioX() {
     if (oscStatusX === 0) { //if oscX is off, turn on, trigger selection of harmonic
         oscX.start();
         oscStatusX = 1;
-        selectHarmonicX(); //select active harmonic (x)
+        selectHarmonicX(); //select active osc harmonic (x)
     } else if (oscStatusX === 1) { //if oscX is on, turn off
         oscX.stop();
         oscStatusX = 0;
-        selectHarmonicY(); //select inactive harmonic (y) to ensure the toggle actually "turns off" if the other is still on
+        selectHarmonicY(); //select inactive osc harmonic (y) to ensure the toggle actually "turns off" if the other is still on
     }
 }
 
@@ -202,12 +205,11 @@ function playPauseAudioY() {
     if (oscStatusY === 0) { //if oscY is off, turn on, trigger selection of harmonic
         oscY.start();
         oscStatusY = 1;
-        selectHarmonicY(); //select active harmonic (y)
+        selectHarmonicY(); //select active osc harmonic (y)
     } else if (oscStatusY === 1) { //if oscY is on, turn off
         oscY.stop();
         oscStatusY = 0;
-        selectHarmonicX(); //select inactive harmonic (x) to ensure the toggle actually "turns off" if the other is still on
-
+        selectHarmonicX(); //select inactive osc harmonic (x) to ensure the toggle actually "turns off" if the other is still on
     }
 }
 
@@ -433,7 +435,9 @@ function computeCurrentXYVisualisation() {
 //set which vis to draw based on selected harmonics
 function setCurrentVisualisation() {
     //vis only changes when selecting harmonic for active osc
-    if (oscStatusX & !oscStatusY) {
+    if (!oscStatusX & !oscStatusY) { //if neither osc, use 0
+        currentVisualisation = str(0);
+    } else if (oscStatusX & !oscStatusY) {
         currentVisualisation = str(currentHarmonicX); //if only oscX, use 1-3
     } else if (!oscStatusX & oscStatusY) {
         currentVisualisation = str(int(currentHarmonicY) + 3); //if only oscY, use 4-6
@@ -451,14 +455,4 @@ function toggleVisualisation() {
         visStatus = 0;
     }
     //document.getElementById("toggleVisualisation").checked
-}
-
-//disable visualisation toggle
-function disableVisualisationToggle() {
-    document.getElementById("toggleVisualisation").disabled = true;
-}
-
-//enable visualisation toggle
-function enableVisualisationToggle() {
-    document.getElementById("toggleVisualisation").disabled = false;
 }
