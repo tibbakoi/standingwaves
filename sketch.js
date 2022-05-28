@@ -36,8 +36,8 @@ let ampX, ampY;
 // image variables for visualisation
 let visStatus = 0;
 let currentVisualisation = 0;
-let colValuesXharm = [];
-let colValuesYharm = [];
+let colorValuesXharm = [];
+let colorValuesYharm = [];
 let visX = [];
 let visY = [];
 let visXY;
@@ -83,7 +83,6 @@ function setup() {
     //compute the 6 base visualisations 
     computeVisualisations();
 }
-
 
 function draw() {
     //persisting elements
@@ -190,10 +189,11 @@ function playPauseAudioX() {
     if (oscStatusX === 0) { //if oscX is off, turn on, trigger selection of harmonic
         oscX.start();
         oscStatusX = 1;
-        selectHarmonicX(); 
+        selectHarmonicX(); //select active harmonic (x)
     } else if (oscStatusX === 1) { //if oscX is on, turn off
         oscX.stop();
         oscStatusX = 0;
+        selectHarmonicY(); //select inactive harmonic (y) to ensure the toggle actually "turns off" if the other is still on
     }
 }
 
@@ -202,10 +202,12 @@ function playPauseAudioY() {
     if (oscStatusY === 0) { //if oscY is off, turn on, trigger selection of harmonic
         oscY.start();
         oscStatusY = 1;
-        selectHarmonicY();
+        selectHarmonicY(); //select active harmonic (y)
     } else if (oscStatusY === 1) { //if oscY is on, turn off
         oscY.stop();
         oscStatusY = 0;
+        selectHarmonicX(); //select inactive harmonic (x) to ensure the toggle actually "turns off" if the other is still on
+
     }
 }
 
@@ -337,9 +339,9 @@ function computeVisualisations() {
 
     //calculate color values for harmonics 1-3, x direction. creates [3x681]
     for (var j = 0; j < 3; j++) {
-        colValuesXharm[j] = [];
+        colorValuesXharm[j] = [];
         for (var i = 0; i <= canvasSizeX; i++) {
-            colValuesXharm[j][i] = abs(cos(radians(i / canvasSizeX * (j + 1) / 2 * 360)));
+            colorValuesXharm[j][i] = abs(cos(radians(i / canvasSizeX * (j + 1) / 2 * 360)));
         }
     }
 
@@ -351,7 +353,7 @@ function computeVisualisations() {
         // fill with color as defined by initial vector of color values
         for (y = 0; y < canvasSizeY; y++) {
             for (x = 0; x < canvasSizeX; x++) {
-                currentValue = colValuesXharm[i][x];
+                currentValue = colorValuesXharm[i][x];
                 writeColor(visX[i], x, y, round(currentValue * startingColorX[0]), round(currentValue * startingColorX[1]), round(currentValue * startingColorX[2]), 255);
             }
         }
@@ -360,9 +362,9 @@ function computeVisualisations() {
 
     //calculate color values for harmonics 1-3, y direction. creates [3x381]
     for (var j = 0; j < 3; j++) {
-        colValuesYharm[j] = [];
+        colorValuesYharm[j] = [];
         for (var i = 0; i <= canvasSizeY; i++) {
-            colValuesYharm[j][i] = abs(cos(radians(i / canvasSizeY * (j + 1) / 2 * 360)));
+            colorValuesYharm[j][i] = abs(cos(radians(i / canvasSizeY * (j + 1) / 2 * 360)));
         }
     }
 
@@ -373,7 +375,7 @@ function computeVisualisations() {
         // fill with color as defined by initial vector of color values
         for (y = 0; y < canvasSizeY; y++) {
             for (x = 0; x < canvasSizeX; x++) {
-                currentValue = colValuesYharm[i][y];
+                currentValue = colorValuesYharm[i][y];
                 writeColor(visY[i], x, y, round(currentValue * startingColorY[0]), round(currentValue * startingColorY[1]), round(currentValue * startingColorY[2]), 255);
             }
         }
@@ -428,8 +430,9 @@ function computeCurrentXYVisualisation() {
     visXY.blend(yImage, 0, 0, canvasSizeX, canvasSizeY, 0, 0, canvasSizeX, canvasSizeY, DIFFERENCE);
 }
 
-//set which is current vis to draw based on selected harmonics
+//set which vis to draw based on selected harmonics
 function setCurrentVisualisation() {
+    //vis only changes when selecting harmonic for active osc
     if (oscStatusX & !oscStatusY) {
         currentVisualisation = str(currentHarmonicX); //if only oscX, use 1-3
     } else if (!oscStatusX & oscStatusY) {
@@ -447,6 +450,7 @@ function toggleVisualisation() {
     } else if (visStatus == 1) { //turn off visualisation
         visStatus = 0;
     }
+    //document.getElementById("toggleVisualisation").checked
 }
 
 //disable visualisation toggle

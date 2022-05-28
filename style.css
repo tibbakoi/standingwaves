@@ -19,6 +19,7 @@ body {
 /* UI element formatting*/
 
 button{
+  font-size: 1em;
   border-color: #04AA6D;
   background-color: white;
   margin-bottom: 10px;
