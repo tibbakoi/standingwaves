@@ -36,9 +36,11 @@ let ampX, ampY;
 // image variables for visualisation
 let visStatus = 0;
 let currentVisualisation = 0;
-let colValueX = [];
-let colValueY = [];
-let visXharm1, visXharm2, visXharm3, visYharm1, visYharm2, visYharm3, visXY;
+let colValuesXharm = [];
+let colValuesYharm = [];
+let visX = [];
+let visY = [];
+let visXY;
 let startingColorX = [236, 0, 255]; //purple
 let startingColorY = [255, 251, 0]; //yellow
 
@@ -96,22 +98,22 @@ function draw() {
         case 1: //yes vis
             switch (currentVisualisation) {
                 case "1":
-                    image(visXharm1, 0, 0);
+                    image(visX[0], 0, 0);
                     break;
                 case "2":
-                    image(visXharm2, 0, 0);
+                    image(visX[1], 0, 0);
                     break;
                 case "3":
-                    image(visXharm3, 0, 0);
+                    image(visX[2], 0, 0);
                     break;
                 case "4":
-                    image(visYharm1, 0, 0);
+                    image(visY[0], 0, 0);
                     break;
                 case "5":
-                    image(visYharm2, 0, 0);
+                    image(visY[1], 0, 0);
                     break;
                 case "6":
-                    image(visYharm3, 0, 0);
+                    image(visY[2], 0, 0);
                     break;
                 case "XY":
                     image(visXY, 0, 0);
@@ -333,100 +335,56 @@ function multiplyHarmonics() {
 function computeVisualisations() {
     //uses same maths as amplitude calculation
 
-    //calculate colour values for harmonics 1-3, x direction. creates [3x681]
+    //calculate color values for harmonics 1-3, x direction. creates [3x681]
     for (var j = 0; j < 3; j++) {
-        colValueX[j] = [];
+        colValuesXharm[j] = [];
         for (var i = 0; i <= canvasSizeX; i++) {
-            colValueX[j][i] = abs(cos(radians(i / canvasSizeX * (j + 1) / 2 * 360)));
+            colValuesXharm[j][i] = abs(cos(radians(i / canvasSizeX * (j + 1) / 2 * 360)));
         }
     }
 
-    //calculate colour values for harmonics 1-3, y direction. creates [3x381]
+    //create images for x harm 1-3. creates [3x381x681]
+    for (var i = 0; i < 3; i++) {
+        visX[i] = createImage(canvasSizeX, canvasSizeY);
+        visX[i].loadPixels();
+        let x, y, currentValue;
+        // fill with color as defined by initial vector of color values
+        for (y = 0; y < canvasSizeY; y++) {
+            for (x = 0; x < canvasSizeX; x++) {
+                currentValue = colValuesXharm[i][x];
+                writeColor(visX[i], x, y, round(currentValue * startingColorX[0]), round(currentValue * startingColorX[1]), round(currentValue * startingColorX[2]), 255);
+            }
+        }
+        visX[i].updatePixels();
+    }
+
+    //calculate color values for harmonics 1-3, y direction. creates [3x381]
     for (var j = 0; j < 3; j++) {
-        colValueY[j] = [];
+        colValuesYharm[j] = [];
         for (var i = 0; i <= canvasSizeY; i++) {
-            colValueY[j][i] = abs(cos(radians(i / canvasSizeY * (j + 1) / 2 * 360)));
+            colValuesYharm[j][i] = abs(cos(radians(i / canvasSizeY * (j + 1) / 2 * 360)));
         }
     }
 
-    //create image for x harm 1
-    visXharm1 = createImage(canvasSizeX, canvasSizeY);
-    visXharm1.loadPixels();
-    let x, y, currentValue;
-    // fill with color as defined by initial vector of color values
-    for (y = 0; y < canvasSizeY; y++) {
-        for (x = 0; x < canvasSizeX; x++) {
-            currentValue = colValueX[0][x];
-            writeColor(visXharm1, x, y, round(currentValue * startingColorX[0]), round(currentValue * startingColorX[1]), round(currentValue * startingColorX[2]), 255);
+    //create image for y harm 1-3, created [3x381x681]
+    for (var i = 0; i < 3; i++) {
+        visY[i] = createImage(canvasSizeX, canvasSizeY);
+        visY[i].loadPixels();
+        // fill with color as defined by initial vector of color values
+        for (y = 0; y < canvasSizeY; y++) {
+            for (x = 0; x < canvasSizeX; x++) {
+                currentValue = colValuesYharm[i][y];
+                writeColor(visY[i], x, y, round(currentValue * startingColorY[0]), round(currentValue * startingColorY[1]), round(currentValue * startingColorY[2]), 255);
+            }
         }
+        visY[i].updatePixels();
     }
-    visXharm1.updatePixels();
 
-    //create image for x harm 2
-    visXharm2 = createImage(canvasSizeX, canvasSizeY);
-    visXharm2.loadPixels();
-    // fill with color as defined by initial vector of color values
-    for (y = 0; y < canvasSizeY; y++) {
-        for (x = 0; x < canvasSizeX; x++) {
-            currentValue = colValueX[1][x];
-            writeColor(visXharm2, x, y, round(currentValue * startingColorX[0]), round(currentValue * startingColorX[1]), round(currentValue * startingColorX[2]), 255);
-        }
-    }
-    visXharm2.updatePixels();
-
-    //create image for x harm 3
-    visXharm3 = createImage(canvasSizeX, canvasSizeY);
-    visXharm3.loadPixels();
-    // fill with color as defined by initial vector of color values
-    for (y = 0; y < canvasSizeY; y++) {
-        for (x = 0; x < canvasSizeX; x++) {
-            currentValue = colValueX[2][x];
-            writeColor(visXharm3, x, y, round(currentValue * startingColorX[0]), round(currentValue * startingColorX[1]), round(currentValue * startingColorX[2]), 255);
-        }
-    }
-    visXharm3.updatePixels();
-
-    //create image for Y harm 1
-    visYharm1 = createImage(canvasSizeX, canvasSizeY);
-    visYharm1.loadPixels();
-    // fill with color as defined by initial vector of color values
-    for (y = 0; y < canvasSizeY; y++) {
-        for (x = 0; x < canvasSizeX; x++) {
-            currentValue = colValueY[0][y];
-            writeColor(visYharm1, x, y, round(currentValue * startingColorY[0]), round(currentValue * startingColorY[1]), round(currentValue * startingColorY[2]), 255);
-        }
-    }
-    visYharm1.updatePixels();
-
-    //create image for Y harm 2
-    visYharm2 = createImage(canvasSizeX, canvasSizeY);
-    visYharm2.loadPixels();
-    // fill with color as defined by initial vector of color values
-    for (y = 0; y < canvasSizeY; y++) {
-        for (x = 0; x < canvasSizeX; x++) {
-            currentValue = colValueY[1][y];
-            writeColor(visYharm2, x, y, round(currentValue * startingColorY[0]), round(currentValue * startingColorY[1]), round(currentValue * startingColorY[2]), 255);
-        }
-    }
-    visYharm2.updatePixels();
-
-    //create image for Y harm 3
-    visYharm3 = createImage(canvasSizeX, canvasSizeY);
-    visYharm3.loadPixels();
-    // fill with color as defined by initial vector of color values
-    for (y = 0; y < canvasSizeY; y++) {
-        for (x = 0; x < canvasSizeX; x++) {
-            currentValue = colValueY[2][y];
-            writeColor(visYharm3, x, y, round(currentValue * startingColorY[0]), round(currentValue * startingColorY[1]), round(currentValue * startingColorY[2]), 255);
-        }
-    }
-    visYharm3.updatePixels();
-
-    // create image for building combination visualisation in later
+    // create empty image for building combination visualisation in later
     visXY = createImage(canvasSizeX, canvasSizeY);
 }
 
-// helper function for writing color value to array
+//helper function for writing color value to array
 function writeColor(image, x, y, red, green, blue, alpha) {
     let index = (x + y * width) * 4;
     image.pixels[index] = red;
@@ -435,6 +393,7 @@ function writeColor(image, x, y, red, green, blue, alpha) {
     image.pixels[index + 3] = alpha;
 }
 
+//compute combination of current X and current Y visualisation
 function computeCurrentXYVisualisation() {
     var xImage, yImage;
 
@@ -443,25 +402,25 @@ function computeCurrentXYVisualisation() {
     // based on currentHarmonicX and currentHarmonicY, get the two images and BLEND THEM
     switch (currentHarmonicX) {
         case "1":
-            xImage = visXharm1;
+            xImage = visX[0];
             break;
         case "2":
-            xImage = visXharm2;
+            xImage = visX[1];
             break;
         case "3":
-            xImage = visXharm3;
+            xImage = visX[2];
             break;
     }
 
     switch (currentHarmonicY) {
         case "1":
-            yImage = visYharm1;
+            yImage = visY[0];
             break;
         case "2":
-            yImage = visYharm2;
+            yImage = visY[1];
             break;
         case "3":
-            yImage = visYharm3;
+            yImage = visY[2];
             break;
     }
 
@@ -469,6 +428,7 @@ function computeCurrentXYVisualisation() {
     visXY.blend(yImage, 0, 0, canvasSizeX, canvasSizeY, 0, 0, canvasSizeX, canvasSizeY, DIFFERENCE);
 }
 
+//set which is current vis to draw based on selected harmonics
 function setCurrentVisualisation() {
     if (oscStatusX & !oscStatusY) {
         currentVisualisation = str(currentHarmonicX); //if only oscX, use 1-3
