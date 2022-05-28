@@ -11,17 +11,22 @@ body {
     max-width: 1600px;
     box-sizing: border-box;
 }
-  /* p {
-    border: solid 1px black;
-    vertical-align: middle;
-  } */
+
 
 /* UI element formatting*/
 
 button{
+  font-size: 1em;
+  border-color: #04AA6D;
+  background-color: white;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
   background-color: #04AA6D;
   color: white;
-  margin-bottom: 10px;
 }
 
 /* switch formatting from https://www.w3schools.com/howto/howto_css_switch.asp */
@@ -76,6 +81,10 @@ input:checked + .slider:before {
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(26px);
+}
+
+input:disabled + .slider {
+  cursor: not-allowed;
 }
 
 .slider.round {
