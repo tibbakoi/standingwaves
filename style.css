@@ -1,8 +1,12 @@
+:root {
+  --colorUI: #04AA6D;
+  --colorOutline: black;
+  --colorBorder: #ddd;
+}
+
 body {
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
-    box-shadow: 0 0 2rem 2rem #eee;
-
     margin: 25px;
     padding: 25px;
     line-height: 1.1;
@@ -12,12 +16,11 @@ body {
     box-sizing: border-box;
 }
 
-
 /* UI element formatting*/
 
 button{
   font-size: 1em;
-  border-color: #04AA6D;
+  border-color: var(--colorUI);
   background-color: white;
   margin-bottom: 10px;
   border-radius: 4px;
@@ -25,7 +28,14 @@ button{
 }
 
 button:hover {
-  background-color: #04AA6D;
+  background-color: var(--colorUI);
+  color: white;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--colorOutline);
+  outline-offset: 1px;
+  background-color: var(--colorUI);
   color: white;
 }
 
@@ -54,7 +64,7 @@ button:hover {
   bottom: 0;
   background-color: #ccc;
   -webkit-transition: .4s;
-  transition: .4s;
+  transition: .05s;
 }
 
 .slider:before {
@@ -70,11 +80,12 @@ button:hover {
 }
 
 input:checked + .slider {
-  background-color: #04AA6D;
+  background-color: var(--colorUI);
 }
 
-input:focus + .slider {
-  box-shadow: 0 0 1px #04AA6D;
+input:focus-visible + .slider {
+  outline: 2px solid var(--colorOutline);
+  outline-offset: 1px;
 }
 
 input:checked + .slider:before {
@@ -96,11 +107,16 @@ input:disabled + .slider {
 }
 
 input[type='radio'] {
-  accent-color: #04AA6D;
+  accent-color: var(--colorUI);
   height: 30px; 
   width: 30px;
   vertical-align: middle;
   margin: 5px;
+  cursor: pointer;
+}
+
+label {
+  cursor: pointer;
 }
 
 
@@ -135,12 +151,12 @@ input[type='radio'] {
   }
 
 header {
-    border-bottom: 3px solid #ddd;
+    border-bottom: 3px solid var(--colorBorder);
 }
 
 footer {
     opacity: 0.6;
-    border-top: 3px solid #ddd;
+    border-top: 3px solid var(--colorBorder);
     padding-top: 20px;
     padding-bottom: 15px;
     text-align: right;

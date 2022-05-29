@@ -42,6 +42,7 @@ let visY = [];
 let visXY;
 let startingColorX = [236, 0, 255]; //purple
 let startingColorY = [255, 251, 0]; //yellow
+let markerColor = [4, 170, 109]; // green - also in css sheet as #04AA6D
 
 //default values
 let oscStatusX = 0;
@@ -166,7 +167,7 @@ function draw() {
 
 //Draw marker at given position and size
 function drawMarker(xPos, yPos, size) {
-    fill(4, 170, 109);
+    fill(markerColor);
     noStroke();
     ellipse(xPos, yPos, size, size);
 }
