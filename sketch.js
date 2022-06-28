@@ -83,6 +83,7 @@ function setup() {
 }
 
 function draw() {
+    //textOutput();
     //persisting elements
     noFill();
     stroke(0);

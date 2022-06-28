@@ -22,8 +22,9 @@
         <h1>2-D Standing Waves Demo</h1>
     </header>
     <div>
-        <p>Use the WASD keys to walk around this top-down view of a room. Use the mouse to move somewhere else within the room.</p>
-        <p>This room size (<span id="xSize">X</span>m by <span id="ySize">Y</span>m) has a lowest standing wave of <span id="lowestMode">X</span>Hz. If you can't hear the frequencies, try the multiply button to make the room smaller.</p>
+        <p>This demo contains a top-down view of a room, with dimensions of <span id="xSize">X</span>m by <span id="ySize">Y</span>.</p>
+        <p>Use the WASD keys to walk around.<br>Use the mouse to move somewhere else within the room.<br> Use the switches to turn the left-right and front-back standing waves on and off. </p>
+        <em>This room has a lowest standing wave of <span id="lowestMode">X</span>Hz. If you can't hear the frequencies, try the multiply button to make the room smaller.</em>
         <span>
             <p><strong><i class="fa-solid fa-arrow-right-arrow-left"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Oscillator: <span id="xDirection">Freq x</strong>
                 <label class="switch">
@@ -53,7 +54,7 @@
             </label>
         </span>
         <span>
-            Multiply harmonics by 3 (make room 3x smaller):
+            Multiply harmonics by 3 (make room dimensions 3x smaller):
             <label class="switch">
                 <input id="toggleHarmonicMultiplier" type="checkbox" onclick="multiplyHarmonics()">
                 <span class="slider round"></span>
