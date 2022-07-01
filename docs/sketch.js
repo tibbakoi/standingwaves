@@ -42,6 +42,7 @@ let visY = [];
 let visXY;
 let startingColorX = [236, 0, 255]; //purple
 let startingColorY = [255, 251, 0]; //yellow
+let markerColor = [4, 170, 109]; // green - also in css sheet as #04AA6D
 
 //default values
 let oscStatusX = 0;
@@ -82,6 +83,7 @@ function setup() {
 }
 
 function draw() {
+    //textOutput();
     //persisting elements
     noFill();
     stroke(0);
@@ -166,7 +168,7 @@ function draw() {
 
 //Draw marker at given position and size
 function drawMarker(xPos, yPos, size) {
-    fill(4, 170, 109);
+    fill(markerColor);
     noStroke();
     ellipse(xPos, yPos, size, size);
 }
@@ -186,7 +188,8 @@ function playPauseAudioX() {
         oscStatusX = 1;
         selectHarmonicX(); //select active osc harmonic (x)
     } else if (oscStatusX === 1) { //if oscX is on, turn off
-        oscX.stop();
+        oscX.amp(0,0.05) //ramp amp down to 0 over 0.05 seconds, then stop osc
+        oscX.stop(0.05);
         oscStatusX = 0;
         selectHarmonicY(); //select inactive osc harmonic (y) to ensure the toggle actually "turns off" if the other is still on
     }
@@ -199,7 +202,8 @@ function playPauseAudioY() {
         oscStatusY = 1;
         selectHarmonicY(); //select active osc harmonic (y)
     } else if (oscStatusY === 1) { //if oscY is on, turn off
-        oscY.stop();
+        oscY.amp(0,0.05); //ramp amp down to 0 over 0.05 seconds, then stop osc
+        oscY.stop(0.05);
         oscStatusY = 0;
         selectHarmonicX(); //select inactive osc harmonic (x) to ensure the toggle actually "turns off" if the other is still on
     }
